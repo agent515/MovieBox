@@ -41,12 +41,12 @@ class _MovieBoxState extends State<MovieBox> {
         unselectedLabelStyle: kBottomNavTextStyle.copyWith(color: Colors.black26),
         unselectedItemColor: Colors.black54,
         unselectedIconTheme: IconThemeData(
-            size: 25.0
+            size: 24.0
         ),
         selectedItemColor: Colors.deepPurple[900],
         selectedLabelStyle: kBottomNavTextStyle,
         selectedIconTheme: IconThemeData(
-            size: 30.0
+            size: 32.0
         ),
 
         onTap: (i) {
