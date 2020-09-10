@@ -1,65 +1,58 @@
 import 'package:flutter/material.dart';
 
 class CastPicCard extends StatelessWidget {
-  CastPicCard({@required this.name, @required this.imageUri});
+  CastPicCard({@required this.name, @required this.imageUri, @required this.role});
 
   final String name;
   final String imageUri;
+  final String role;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        height: 120,
         width: 120,
         child: Stack(
           children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(this.imageUri),
-                    fit: BoxFit.cover,
+            Column(
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(120.0),
+                  child: Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(this.imageUri),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Text(
+                    this.name,
+                    textAlign: TextAlign.center ,
+                    maxLines: 2,
+                    style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 16.0,
+                        fontFamily: 'SourceSansPro',
+                        fontWeight: FontWeight.w500)),
+                Text(
+                  this.role,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                    decoration: TextDecoration.none,
+                    color: Colors.grey,
+                    fontSize: 16.0,
+                    fontFamily: 'SourceSansPro',
+                    fontWeight: FontWeight.bold,
+                  )
+                )
+              ],
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6.0), bottomRight: Radius.circular(6.0)),
-                    gradient: LinearGradient(
-                        begin: Alignment(0.0, 0.7),
-                        end: Alignment(0.0, -1.0),
-                        colors: <Color>[
-                          Colors.black54.withOpacity(0.9),
-                          Colors.black54.withOpacity(0.0)
-                        ]
-                    )
-                ),
-                height: 80,
-                width: double.infinity,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Text(this.name,
-                        style: TextStyle(
-                            decoration: TextDecoration.none,
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontFamily: 'SourceSansPro',
-                            fontWeight: FontWeight.w500)),
-                  ),
-                ),
-              ),
-            )
           ],
         ),
       ),
