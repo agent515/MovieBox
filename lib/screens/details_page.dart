@@ -6,6 +6,8 @@ import 'package:movie_box/components/movie_poster_card.dart';
 import 'package:movie_box/components/review.dart';
 import 'package:movie_box/constants/styles.dart';
 import 'package:icon_shadow/icon_shadow.dart';
+import 'package:like_button/like_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
   @override
@@ -15,8 +17,11 @@ class DetailsPage extends StatefulWidget {
 bool showMore = false;
 bool longName = true;
 bool tapped = false;
+bool isLiked = false;
+bool addedToWatchlist = false;
 
 class _DetailsPageState extends State<DetailsPage> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,15 +31,11 @@ class _DetailsPageState extends State<DetailsPage> {
         physics: showMore ? ScrollPhysics() : NeverScrollableScrollPhysics(),
         children: <Widget>[
           GestureDetector(
-            onPanUpdate: (panUpdateDetails) {
+            behavior: HitTestBehavior.opaque,
+            onPanUpdate: (dragDownDetails) {
               setState(() {
+                tapped = false;
                 showMore = true;
-                tapped = false;
-              });
-            },
-            onPanDown: (dragDownDetails) {
-              setState(() {
-                tapped = false;
               });
             },
             onLongPress: () {
@@ -42,6 +43,7 @@ class _DetailsPageState extends State<DetailsPage> {
                 tapped = !tapped;
               });
             },
+            onTap: null,
             child: Container(
               height: MediaQuery.of(context).size.height,
               child: Stack(
@@ -57,6 +59,7 @@ class _DetailsPageState extends State<DetailsPage> {
                       ),
                     ),
                   ),
+                  // TODO: Add Like Button to add movie to Liked Movie List
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -179,10 +182,27 @@ class _DetailsPageState extends State<DetailsPage> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                Icon(
-                                  Icons.play_circle_filled,
-                                  color: Colors.orangeAccent,
-                                  size: 42.0,
+                                ClipOval(
+                                  child: Material(
+                                    elevation: 2.0,
+                                    child: InkWell(
+                                      splashColor: Colors.deepOrange,
+                                      onTap: () async {
+                                        String url = "https://www.imdb.com/videoplayer/vi1723318041";
+                                        if (await canLaunch(url)) {
+                                          await launch(url);
+                                        }
+                                        else {
+                                          throw 'Could not launch $url';
+                                        }
+                                      },
+                                      child: Icon(
+                                        Icons.play_circle_filled,
+                                        color: Colors.orangeAccent,
+                                        size: 42.0,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -244,30 +264,48 @@ class _DetailsPageState extends State<DetailsPage> {
                                 ]),
                           ),
                           alignment: Alignment(0.0, -0.5),
-                          child: Container(
-                              height: 32.0,
-                              width: 200.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.0),
+                            child: Material(
+                              borderRadius: BorderRadius.circular(12.0),
+                              color: Colors.white.withOpacity(0),
+                              child: InkWell(
+                                splashColor: Colors.white,
+                                onTap: () {
+                                  // TODO: Add to Watchlist
+                                  setState(() {
+                                    addedToWatchlist = !addedToWatchlist;
+                                  });
+                                },
+                                child: Container(
+                                    height: 32.0,
+                                    width: 200.0,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      border: Border.all(
+                                        color: addedToWatchlist ? Colors.black54.withOpacity(0) : Colors.white,
+                                        width: 2.0,
+                                      ),
+                                      borderRadius: BorderRadius.circular(12.0),
+                                      color: addedToWatchlist ? Colors.white : Colors.black54.withOpacity(0),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        addedToWatchlist ? 'Added' : 'Add to watchlist',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: addedToWatchlist ? Colors.black54.withOpacity(0.7): Colors.white,
+                                          fontFamily: 'SourceSansPro',
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                    )),
                               ),
-                              child: Center(
-                                child: Text(
-                                  'Add to watchlist',
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
-                                    color: Colors.white,
-                                    fontFamily: 'SourceSansPro',
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                              )),
+                            ),
+                          ),
                         )
                       : Container(),
                 ],
@@ -376,15 +414,6 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                         ),
                         Heading3(title: 'Numbers'),
-//                        Column(
-//                          children: <Widget>[
-//                            NumbersRow(property: 'Release date', value: '2019-10-02'),
-//                            NumbersRow(property: 'Runtime', value: '2h 2m'),
-//                            NumbersRow(property: 'Rating', value: '8.5'),
-//                            NumbersRow(property: 'Revenue', value: '\$1 Billion',),
-//                            NumbersRow(property: 'Certification', value: 'UG'),
-//                          ],
-//                        ),
                         Container(
                           height: 300,
                           child: LayoutBuilder(
@@ -404,7 +433,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                         property: 'Revenue',
                                         value: '\$1 Billion'),
                                     CustomCard(
-                                        property: 'Certification', value: 'UG'),
+                                        property: 'Certification', value: 'R'),
                                   ]);
                             },
                           ),

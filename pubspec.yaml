@@ -27,6 +27,8 @@ dependencies:
   flutter_statusbarcolor: ^0.2.3
   icon_shadow: ^1.0.1
   expand_widget: ^1.0.0+1
+  like_button: ^1.0.1
+  url_launcher: ^5.5.3
 
 dev_dependencies:
   flutter_test:

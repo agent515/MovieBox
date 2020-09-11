@@ -9,30 +9,30 @@ class Review extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            this.author,
-            style: TextStyle(
-              decoration: TextDecoration.none,
-              color: Colors.deepPurple,
-              fontFamily: 'SourceSansPro',
-              fontSize: 12.0,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          this.author,
+          style: TextStyle(
+            decoration: TextDecoration.none,
+            color: Colors.deepPurple,
+            fontFamily: 'SourceSansPro',
+            fontSize: 12.0,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.5,
           ),
-          Card(
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Card(
             elevation: 0.0,
             child: ExpandText(
               this.comment,
               textAlign: TextAlign.justify,
               maxLines: 4,
               expandArrowStyle: ExpandArrowStyle.icon,
-              expandOnGesture: false,
+              expandOnGesture: true,
               style: TextStyle(
                 decoration: TextDecoration.none,
                 color:Colors.black54.withOpacity(0.7),
@@ -40,9 +40,9 @@ class Review extends StatelessWidget {
                 fontSize: 12.0,
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }
