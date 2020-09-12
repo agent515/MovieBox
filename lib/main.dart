@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_box/screens/search_page.dart';
 import 'screens/explore_page.dart';
 import 'screens/watch_list.dart';
 import 'screens/welcome_page.dart';
@@ -26,6 +27,7 @@ class _MovieBoxState extends State<MovieBox> {
   int index = 0;
   List<Widget> screens =  [
     ExplorePage(),
+    SearchPage(),
     WatchList(),
   ];
 
@@ -62,6 +64,14 @@ class _MovieBoxState extends State<MovieBox> {
             ),
             title: Text(
               'Explore',
+            ),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.search,
+            ),
+            title: Text(
+              'Search'
             ),
           ),
           BottomNavigationBarItem(

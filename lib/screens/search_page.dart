@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:movie_box/components/my_app_bar.dart';
-import 'package:movie_box/components/category_box.dart';
 import 'package:movie_box/screens/details_page.dart';
 
-enum category { Trending, TopRated }
-
-class ExplorePage extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   @override
-  _ExplorePageState createState() => _ExplorePageState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _ExplorePageState extends State<ExplorePage> {
-  category currentCategory = category.Trending;
+class _SearchPageState extends State<SearchPage> {
+  TextEditingController searchTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.only(left: 8.0, top: 8.0, right: 8.0, bottom: 8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
           MyAppBar(),
@@ -25,46 +21,41 @@ class _ExplorePageState extends State<ExplorePage> {
             height: 16.0,
           ),
           Container(
-            alignment: Alignment.topLeft,
-            height: 32.0,
-            child: ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                CategoryBox(
-                  boxColor: currentCategory == category.Trending
-                      ? Colors.deepPurple[900]
-                      : Colors.white,
-                  textColor: currentCategory == category.Trending
-                      ? Colors.white
-                      : Colors.black54,
-                  text: 'Trending',
-                  onTapCallback: () {
-                    setState(() {
-                      currentCategory = category.Trending;
-                    });
-                  },
+            height: 52.0,
+            child: Card(
+                elevation: 4.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-                CategoryBox(
-                  boxColor: currentCategory == category.TopRated
-                      ? Colors.deepPurple[900]
-                      : Colors.white,
-                  textColor: currentCategory == category.TopRated
-                      ? Colors.white
-                      : Colors.black54,
-                  text: 'Top-rated',
-                  onTapCallback: () {
-                    setState(() {
-                      currentCategory = category.TopRated;
-                    });
-                  },
-                ),
-              ],
-            ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: TextField(
+                    cursorColor: Colors.black38,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search',
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.black38,
+                      ),
+                    ),
+                    onEditingComplete: () {
+                      print(searchTextController.text);
+                    },
+                    enableSuggestions: true,
+                    autofocus: true,
+                    style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.black54,
+                        fontFamily: 'SourceSansPro',
+                        fontSize: 16.0,
+                        letterSpacing: 0.5),
+                    textAlign: TextAlign.center,
+                    controller: searchTextController,
+                  ),
+                )),
           ),
-          SizedBox(
-            height: 16,
-          ),
+          SizedBox(height: 16.0,),
           Expanded(
             child: ListView(
               padding: EdgeInsets.only(top: 0.0),
@@ -86,10 +77,10 @@ class _ExplorePageState extends State<ExplorePage> {
                                 crossAxisCount: 3,
                                 mainAxisSpacing: 8.0,
                                 crossAxisSpacing: 8.0,
-                                children: List.generate(30, (index) {
+                                children: List.generate(5, (index) {
                                   return GestureDetector(
                                     onTap: (){
-                                       Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => DetailsPage()));
                                     },
                                     child: Card(
                                       shape: RoundedRectangleBorder(
@@ -100,26 +91,26 @@ class _ExplorePageState extends State<ExplorePage> {
                                           Expanded(
                                             flex: 4,
                                             child: Container(
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.rectangle,
-                                                  color: Colors.deepPurple[900],
-                                                  borderRadius: BorderRadius.circular(15.0),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.rectangle,
+                                                color: Colors.deepPurple[900],
+                                                borderRadius: BorderRadius.circular(15.0),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.only(topRight: Radius.circular(12), topLeft: Radius.circular(12)),
+                                                child: Image.network(
+                                                  'https://cdn.shopify.com/s/files/1/0969/9128/products/Joker_-_Put_On_A_Happy_Face_-_Joaquin_Phoenix_-_Hollywood_English_Movie_Poster_3_6cb8f765-be3f-4cb8-bb4e-ead8c435e42e.jpg?v=1579504964',
+                                                  fit: BoxFit.cover,
                                                 ),
-                                                child: ClipRRect(
-                                                  borderRadius: BorderRadius.only(topRight: Radius.circular(12), topLeft: Radius.circular(12)),
-                                                  child: Image.network(
-                                                    'https://cdn.shopify.com/s/files/1/0969/9128/products/Joker_-_Put_On_A_Happy_Face_-_Joaquin_Phoenix_-_Hollywood_English_Movie_Poster_3_6cb8f765-be3f-4cb8-bb4e-ead8c435e42e.jpg?v=1579504964',
-                                                    fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
+                                              ),
+                                            ),
                                           ),
                                           Expanded(
                                             flex: 1,
                                             child: Column(
                                               children: <Widget>[
                                                 Text(
-                                                    'Joker',
+                                                  'Joker',
                                                   style: TextStyle(
                                                     fontSize: 16.0,
                                                     color: Colors.black87,
