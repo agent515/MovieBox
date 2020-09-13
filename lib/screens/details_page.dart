@@ -10,17 +10,82 @@ import 'package:like_button/like_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
+
+  DetailsPage({this.data});
+  final Map<dynamic, dynamic> data;
+
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
-
-bool showMore = false;
-bool longName = true;
-bool tapped = false;
-bool isLiked = false;
-bool addedToWatchlist = false;
-
 class _DetailsPageState extends State<DetailsPage> {
+  bool showMore = false;
+  bool longName = true;
+  bool tapped = false;
+  bool isLiked = false;
+  bool addedToWatchlist = false;
+  Map<dynamic, dynamic> data;
+
+  @override
+  void initState() {
+    data = widget.data;
+    if (data['title'].length > 20 && data['title'].split(' ').length > 3) {
+      longName = true;
+    }
+    else {
+      longName = false;
+    }
+    super.initState();
+  }
+
+  Widget _getMovieTitle(){
+    String title = data["title"];
+    List<String> words = title.split(' ');
+    int wordCount = title.split(' ').length;
+    String firstPart = "";
+    String secondPart = "";
+
+    if (title.length > 20 && wordCount > 3) {
+      setState(() {
+        longName = true;
+      });
+      for ( int i=0; i < wordCount ~/ 2; i++ ){
+        firstPart += " " + words[i];
+      }
+      for(int i= wordCount ~/ 2; i < wordCount; i++) {
+        secondPart += " " + words[i];
+      }
+    }
+    else {
+      setState(() {
+        longName = false;
+      });
+      for ( int i=0; i < wordCount; i++ ){
+        firstPart += " " + words[i];
+      }
+    }
+    print(longName);
+    print(firstPart);
+    print(secondPart);
+
+    return Flex(
+        direction: Axis.vertical,
+        children: <Widget>[
+          Text(
+            firstPart,
+            maxLines: 1,
+            style: kDetailsTitleTextStyle,
+          ),
+          longName
+              ? Text(
+            secondPart,
+            maxLines: 1,
+            style: kDetailsTitleTextStyle,
+          )
+              : Container(
+            height: 0,
+          ),
+        ]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +118,8 @@ class _DetailsPageState extends State<DetailsPage> {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: NetworkImage(
-                          'https://cdn.shopify.com/s/files/1/0969/9128/products/Joker_-_Put_On_A_Happy_Face_-_Joaquin_Phoenix_-_Hollywood_English_Movie_Poster_3_6cb8f765-be3f-4cb8-bb4e-ead8c435e42e.jpg?v=1579504964',
+//                          'https://cdn.shopify.com/s/files/1/0969/9128/products/Joker_-_Put_On_A_Happy_Face_-_Joaquin_Phoenix_-_Hollywood_English_Movie_Poster_3_6cb8f765-be3f-4cb8-bb4e-ead8c435e42e.jpg?v=1579504964',
+                          "https://image.tmdb.org/t/p/w500${data["poster_path"]}",
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -85,32 +151,17 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                           Expanded(
                             flex: longName ? 5 : 2,
-                            child: Flex(
-                                direction: Axis.vertical,
-                                children: <Widget>[
-                                  Text(
-                                    'Joker',
-                                    style: kDetailsTitleTextStyle,
-                                  ),
-                                  longName
-                                      ? Text(
-                                          'Joker',
-                                          style: kDetailsTitleTextStyle,
-                                        )
-                                      : Container(
-                                          height: 0,
-                                        ),
-                                ]),
+                            child: _getMovieTitle(),
                           ),
                           Expanded(
-                            flex: longName ? 2 : 1,
+                            flex: longName ? 2 : 2,
                             child: Column(
                               children: <Widget>[
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      '2019',
+                                      data["release_date"].toString().substring(0, 4),
                                       style: kDetailsSubtitleTextStyle,
                                     ),
                                     Padding(
@@ -144,7 +195,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ],
                                 )
                               ],
-                            ),
+                            )
                           ),
                           Expanded(
                             flex: longName ? 2 : 1,
