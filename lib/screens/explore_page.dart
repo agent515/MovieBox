@@ -65,12 +65,13 @@ class _ExplorePageState extends State<ExplorePage> {
 
     for (int i = 0; i < showList.length; i++) {
       Widget card = GestureDetector(
-        onTap: () {
+        onTap: () async {
+          var details = await Api.getDetails(showList[i]['id'], 'movie');
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => DetailsPage(
-                        data: showList[i],
+                        data: details,
                       )));
         },
         child: Card(

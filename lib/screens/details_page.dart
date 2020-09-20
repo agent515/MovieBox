@@ -7,16 +7,17 @@ import 'package:movie_box/components/review.dart';
 import 'package:movie_box/constants/styles.dart';
 import 'package:icon_shadow/icon_shadow.dart';
 import 'package:like_button/like_button.dart';
+import 'package:movie_box/services/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsPage extends StatefulWidget {
-
   DetailsPage({this.data});
   final Map<dynamic, dynamic> data;
 
   @override
   _DetailsPageState createState() => _DetailsPageState();
 }
+
 class _DetailsPageState extends State<DetailsPage> {
   bool showMore = false;
   bool longName = true;
@@ -28,16 +29,18 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   void initState() {
     data = widget.data;
+    print("data: $data");
+    print("length: ${data["genres"].length}");
+    print("${data["genres"]} ");
     if (data['title'].length > 20 && data['title'].split(' ').length > 3) {
       longName = true;
-    }
-    else {
+    } else {
       longName = false;
     }
     super.initState();
   }
 
-  Widget _getMovieTitle(){
+  Widget _getMovieTitle() {
     String title = data["title"];
     List<String> words = title.split(' ');
     int wordCount = title.split(' ').length;
@@ -48,18 +51,17 @@ class _DetailsPageState extends State<DetailsPage> {
       setState(() {
         longName = true;
       });
-      for ( int i=0; i < wordCount ~/ 2; i++ ){
+      for (int i = 0; i <= wordCount ~/ 2; i++) {
         firstPart += " " + words[i];
       }
-      for(int i= wordCount ~/ 2; i < wordCount; i++) {
+      for (int i = wordCount ~/ 2; i < wordCount; i++) {
         secondPart += " " + words[i];
       }
-    }
-    else {
+    } else {
       setState(() {
         longName = false;
       });
-      for ( int i=0; i < wordCount; i++ ){
+      for (int i = 0; i < wordCount; i++) {
         firstPart += " " + words[i];
       }
     }
@@ -67,24 +69,53 @@ class _DetailsPageState extends State<DetailsPage> {
     print(firstPart);
     print(secondPart);
 
-    return Flex(
-        direction: Axis.vertical,
-        children: <Widget>[
-          Text(
-            firstPart,
-            maxLines: 1,
-            style: kDetailsTitleTextStyle,
-          ),
-          longName
-              ? Text(
-            secondPart,
-            maxLines: 1,
-            style: kDetailsTitleTextStyle,
-          )
-              : Container(
-            height: 0,
-          ),
-        ]);
+    return Flex(direction: Axis.vertical, children: <Widget>[
+      Text(
+        firstPart,
+        maxLines: 1,
+        style: kDetailsTitleTextStyle,
+        textAlign: TextAlign.center,
+      ),
+      longName
+          ? Text(
+              secondPart,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              style: kDetailsTitleTextStyle,
+            )
+          : Container(
+              height: 0,
+            ),
+    ]);
+  }
+
+  Widget _getStars() {
+    List<Widget> stars = [];
+    double rating = data["vote_average"];
+    int full_stars = rating.round() ~/ 2;
+    print(data["vote_average"]);
+    print(((rating - (rating ~/ 2) * 2) / 2).round());
+    int half_star = ((rating - (rating ~/ 2) * 2) / 2).round();
+    int zero_star = 5 - full_stars - half_star;
+
+    for (int i = 1; i <= full_stars; i++) {
+      stars.add(Icon(Icons.star,
+          color: Colors.yellow, size: 16.0));
+    }
+
+    for (int i = 1; i <= half_star; i++) {
+      stars.add(Icon(Icons.star_half,
+          color: Colors.yellow, size: 16.0));
+    }
+
+    for (int i = 1; i <= zero_star; i++) {
+      stars.add(Icon(Icons.star_border , color: Colors.yellow, size: 16.0));
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+    children: stars,
+    );
   }
 
   @override
@@ -154,69 +185,50 @@ class _DetailsPageState extends State<DetailsPage> {
                             child: _getMovieTitle(),
                           ),
                           Expanded(
-                            flex: longName ? 2 : 2,
-                            child: Column(
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      data["release_date"].toString().substring(0, 4),
-                                      style: kDetailsSubtitleTextStyle,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: Icon(
-                                        Icons.star,
-                                        color: Colors.grey,
-                                        size: 8.0,
+                              flex: longName ? 2 : 2,
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        data["release_date"]
+                                            .toString()
+                                            .substring(0, 4),
+                                        style: kDetailsSubtitleTextStyle,
                                       ),
-                                    ),
-                                    Text('Warner Brothers',
-                                        style: kDetailsSubtitleTextStyle)
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Crime ',
-                                      style: kDetailsGenreTextStyle,
-                                    ),
-                                    Text(
-                                      'Thriller ',
-                                      style: kDetailsGenreTextStyle,
-                                    ),
-                                    Text(
-                                      'Tragedy ',
-                                      style: kDetailsGenreTextStyle,
-                                    )
-                                  ],
-                                )
-                              ],
-                            )
-                          ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        child: Icon(
+                                          Icons.star,
+                                          color: Colors.grey,
+                                          size: 8.0,
+                                        ),
+                                      ),
+                                      Text(
+                                          data["production_companies"].length > 0 ?  data["production_companies"][0]["name"] : "Not Known",
+                                          maxLines: 1,
+                                          style: kDetailsSubtitleTextStyle)
+                                    ],
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: List.generate(
+                                          data["genres"].length,
+                                          (index) => Text(
+                                                "${data["genres"][index]["name"].toString()}  ",
+                                                style: kDetailsGenreTextStyle,
+                                              )))
+                                ],
+                              )),
                           Expanded(
                             flex: longName ? 2 : 1,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Icon(Icons.star,
-                                      color: Colors.yellow, size: 16.0),
-                                  Icon(Icons.star,
-                                      color: Colors.yellow, size: 16.0),
-                                  Icon(Icons.star,
-                                      color: Colors.yellow, size: 16.0),
-                                  Icon(Icons.star,
-                                      color: Colors.yellow, size: 16.0),
-                                  Icon(Icons.star_half,
-                                      color: Colors.yellow, size: 16.0),
-                                ],
-                              ),
+                              child: _getStars(),
                             ),
                           ),
                           Expanded(
@@ -239,11 +251,19 @@ class _DetailsPageState extends State<DetailsPage> {
                                     child: InkWell(
                                       splashColor: Colors.deepOrange,
                                       onTap: () async {
-                                        String url = "https://www.imdb.com/videoplayer/vi1723318041";
+                                        String url = await Api.getVideoLink(data["imdb_id"].toString());
+                                        if (url == "") {
+                                          if (data.containsKey("imdb_id")) {
+                                            url =
+                                            "https://www.youtube.com/results?search_query=${data["title"]}";
+                                          }
+                                        }
+                                          print(url);
+//                                        String url =
+//                                            "https://www.imdb.com/videoplayer/vi1723318041";
                                         if (await canLaunch(url)) {
                                           await launch(url);
-                                        }
-                                        else {
+                                        } else {
                                           throw 'Could not launch $url';
                                         }
                                       },
@@ -264,7 +284,8 @@ class _DetailsPageState extends State<DetailsPage> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16.0, vertical: 4.0),
                               child: Text(
-                                'The Joker is a master criminal with a clown-like appearance, and is considered one of the most infamous criminals within Gotham City. Initially portrayed as a violent sociopath who murders people for his own amusement, the Joker later in the 1940s began to be written as a goofy trickster-thief. Initially portrayed as a violent sociopath who murders people for his own amusement, the Joker later in the 1940s began to be written as a goofy trickster-thief.',
+//                                'The Joker is a master criminal with a clown-like appearance, and is considered one of the most infamous criminals within Gotham City. Initially portrayed as a violent sociopath who murders people for his own amusement, the Joker later in the 1940s began to be written as a goofy trickster-thief. Initially portrayed as a violent sociopath who murders people for his own amusement, the Joker later in the 1940s began to be written as a goofy trickster-thief.',
+                                data["overview"],
                                 textAlign: TextAlign.justify,
                                 maxLines: 7,
                                 style: kDetailsDescriptionTextStyle,
@@ -334,19 +355,27 @@ class _DetailsPageState extends State<DetailsPage> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
                                       border: Border.all(
-                                        color: addedToWatchlist ? Colors.black54.withOpacity(0) : Colors.white,
+                                        color: addedToWatchlist
+                                            ? Colors.black54.withOpacity(0)
+                                            : Colors.white,
                                         width: 2.0,
                                       ),
                                       borderRadius: BorderRadius.circular(12.0),
-                                      color: addedToWatchlist ? Colors.white : Colors.black54.withOpacity(0),
+                                      color: addedToWatchlist
+                                          ? Colors.white
+                                          : Colors.black54.withOpacity(0),
                                     ),
                                     child: Center(
                                       child: Text(
-                                        addedToWatchlist ? 'Added' : 'Add to watchlist',
+                                        addedToWatchlist
+                                            ? 'Added'
+                                            : 'Add to watchlist',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
-                                          color: addedToWatchlist ? Colors.black54.withOpacity(0.7): Colors.white,
+                                          color: addedToWatchlist
+                                              ? Colors.black54.withOpacity(0.7)
+                                              : Colors.white,
                                           fontFamily: 'SourceSansPro',
                                           fontSize: 20.0,
                                           fontWeight: FontWeight.w700,
