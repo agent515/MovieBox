@@ -46,4 +46,10 @@ class Api {
     Map<dynamic, dynamic> response = JsonDecoder().convert(res.body);
     return response["trailer"]["link"];
   }
+
+  static Future<dynamic> getCast&Crew(int id) async {
+    // https://api.themoviedb.org/3/movie/718444/credits?api_key=70b3fe419bc1af900e38f6e2fa89c1cf
+    String url = "https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB";
+
+  }
 }
