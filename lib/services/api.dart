@@ -47,9 +47,17 @@ class Api {
     return response["trailer"]["link"];
   }
 
-  static Future<dynamic> getCast&Crew(int id) async {
-    // https://api.themoviedb.org/3/movie/718444/credits?api_key=70b3fe419bc1af900e38f6e2fa89c1cf
+  static Future<dynamic> getCastCrew(int id) async {
+    // https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB
     String url = "https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB";
+    Map<dynamic, dynamic> response = await NetworkHandler.httpRequest(url);
+    return response;
+  }
 
+  static Future<dynamic> getReviews(int id, {int pageNo = 1}) async {
+    // https://api.themoviedb.org/3/movie/475557/reviews?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=1
+    String url = "https://api.themoviedb.org/3/movie/$id/reviews?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=$pageNo";
+    Map<dynamic, dynamic> response = await NetworkHandler.httpRequest(url);
+    return response;
   }
 }

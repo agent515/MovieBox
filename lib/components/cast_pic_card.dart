@@ -23,7 +23,8 @@ class CastPicCard extends StatelessWidget {
                     height: 120,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(this.imageUri),
+                        // TODO: Replace NetworkImage placeholder with AssetImage
+                        image: (this.imageUri == "") ? NetworkImage("https://critics.io/img/movies/poster-placeholder.png") :NetworkImage(this.imageUri),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -44,8 +45,8 @@ class CastPicCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   style: TextStyle(
-                    decoration: TextDecoration.none,
                     color: Colors.grey,
+                    decoration: TextDecoration.none,
                     fontSize: 16.0,
                     fontFamily: 'SourceSansPro',
                     fontWeight: FontWeight.bold,

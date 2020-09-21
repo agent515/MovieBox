@@ -7,6 +7,7 @@ import 'package:movie_box/components/review.dart';
 import 'package:movie_box/constants/styles.dart';
 import 'package:icon_shadow/icon_shadow.dart';
 import 'package:like_button/like_button.dart';
+import 'package:movie_box/helper.dart';
 import 'package:movie_box/services/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,6 +26,7 @@ class _DetailsPageState extends State<DetailsPage> {
   bool isLiked = false;
   bool addedToWatchlist = false;
   Map<dynamic, dynamic> data;
+  Map<dynamic, dynamic> castCrewData = null;
 
   @override
   void initState() {
@@ -32,7 +34,7 @@ class _DetailsPageState extends State<DetailsPage> {
     print("data: $data");
     print("length: ${data["genres"].length}");
     print("${data["genres"]} ");
-    if (data['title'].length > 20 && data['title'].split(' ').length > 3) {
+    if (data['title'].length > 20 && data['title'].split(' ').length >= 3) {
       longName = true;
     } else {
       longName = false;
@@ -47,14 +49,14 @@ class _DetailsPageState extends State<DetailsPage> {
     String firstPart = "";
     String secondPart = "";
 
-    if (title.length > 20 && wordCount > 3) {
+    if (title.length > 20 && wordCount >= 3) {
       setState(() {
         longName = true;
       });
       for (int i = 0; i <= wordCount ~/ 2; i++) {
         firstPart += " " + words[i];
       }
-      for (int i = wordCount ~/ 2; i < wordCount; i++) {
+      for (int i = wordCount ~/ 2 + 1; i < wordCount; i++) {
         secondPart += " " + words[i];
       }
     } else {
@@ -92,23 +94,21 @@ class _DetailsPageState extends State<DetailsPage> {
   Widget _getStars() {
     List<Widget> stars = [];
     double rating = data["vote_average"];
-    int full_stars = rating.round() ~/ 2;
-    print(data["vote_average"]);
-    print(((rating - (rating ~/ 2) * 2) / 2).round());
-    int half_star = ((rating - (rating ~/ 2) * 2) / 2).round();
-    int zero_star = 5 - full_stars - half_star;
+    int fullStars = rating.round() ~/ 2;
+    int halfStars = ((rating - (rating ~/ 2) * 2) / 2).round();
+    int zeroStars = 5 - fullStars - halfStars;
 
-    for (int i = 1; i <= full_stars; i++) {
+    for (int i = 1; i <= fullStars; i++) {
       stars.add(Icon(Icons.star,
           color: Colors.yellow, size: 16.0));
     }
 
-    for (int i = 1; i <= half_star; i++) {
+    for (int i = 1; i <= halfStars; i++) {
       stars.add(Icon(Icons.star_half,
           color: Colors.yellow, size: 16.0));
     }
 
-    for (int i = 1; i <= zero_star; i++) {
+    for (int i = 1; i <= zeroStars; i++) {
       stars.add(Icon(Icons.star_border , color: Colors.yellow, size: 16.0));
     }
 
@@ -116,6 +116,81 @@ class _DetailsPageState extends State<DetailsPage> {
       mainAxisAlignment: MainAxisAlignment.center,
     children: stars,
     );
+  }
+
+  Future<List<Widget>> _getCastCrew(String entity) async {
+    if (castCrewData == null) {
+      var result = await Api.getCastCrew(data["id"]);
+      castCrewData = result;
+    }
+    List<Widget> entityList = [];
+    if (entity == "Cast") {
+      for (int i = 0; i < castCrewData["cast"].length; i++) {
+        Widget card = CastPicCard(
+          name: castCrewData["cast"][i]["name"],
+          role: castCrewData["cast"][i]["character"],
+          imageUri:
+          (castCrewData["cast"][i]["profile_path"] == null) ? "" : "https://image.tmdb.org/t/p/w300${castCrewData["cast"][i]["profile_path"]}",
+        );
+        entityList.add(card);
+      }
+    }
+    else if (entity == "Crew") {
+      for (int i = 0; i < castCrewData["crew"].length; i++) {
+        Widget card = CastPicCard(
+          name: castCrewData["crew"][i]["name"],
+          role: castCrewData["crew"][i]["job"],
+          imageUri:
+          (castCrewData["crew"][i]["profile_path"] == null) ? "" : "https://image.tmdb.org/t/p/w300${castCrewData["crew"][i]["profile_path"]}",
+        );
+        entityList.add(card);
+      }
+    }
+    return entityList;
+  }
+
+  List<Widget> _getNumbers() {
+    List<Widget> cards = [];
+    Widget card;
+    if ( data.containsKey("release_date") ) {
+      var date = Helper.dateIntToChar(data["release_date"]);
+      card = CustomCard(
+        property: "Release Date",
+        value: "${date["day"]} ${date["month"]}\n${date["year"]}",
+      );
+      cards.add(card);
+    }
+    if ( data.containsKey("runtime") ) {
+      card = CustomCard(
+        property: "Runtime",
+        value: "2H 2M",
+      );
+      cards.add(card);
+    }
+    if (data.containsKey("vote_average")) {
+      Widget card = CustomCard(
+        property: "Rating",
+        value: data["vote_average"].toString(),
+      );
+      cards.add(card);
+    }
+    if (data.containsKey("revenue")) {
+      var revenue = Helper.revenueIntToChar(data["revenue"]);
+      print(revenue);
+      Widget card = CustomCard(
+        property: "Revenue",
+        value: "\$${revenue["amount"]} ${revenue["scale"]}",
+      );
+      cards.add(card);
+    }
+    if (data.containsKey("original_language")) {
+      Widget card = CustomCard(
+        property: "Language",
+        value: "en",
+      );
+      cards.add(card);
+    }
+    return cards;
   }
 
   @override
@@ -303,7 +378,7 @@ class _DetailsPageState extends State<DetailsPage> {
                           bottom: MediaQuery.of(context).size.height * 0.04,
                           child: Center(
                             child: GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 setState(() {
                                   showMore = true;
                                 });
@@ -402,96 +477,42 @@ class _DetailsPageState extends State<DetailsPage> {
                         Heading3(
                           title: 'Cast',
                         ),
-                        Container(
-                          height: 200.0,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Cliff Booth',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Joaquin Phoenix',
-                                role: 'Joker',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BZGMyY2Q4NTEtMWVkZS00NzcwLTkzNmQtYzBlMWZhZGNhMDhkXkEyXkFqcGdeQXVyNjk1MjYyNTA@._V1_UY1200_CR86,0,630,1200_AL_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Cliff Booth',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Cliff Booth',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Cliff Booth',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Cliff Booth',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                            ],
-                          ),
-                        ),
+                        FutureBuilder(
+                          future: _getCastCrew("Cast"),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done) {
+                              return Container(
+                                height: 200,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: snapshot.data,
+                                  ),
+                              );
+                            }
+                            else {
+                              return Container(height: 200,);
+                            }
+                          },
+                        ) ,
                         Heading3(
                           title: 'Crew',
                         ),
-                        Container(
-                          height: 200.0,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              CastPicCard(
-                                name: 'Christopher Nolan',
-                                role: 'Director',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BNjE3NDQyOTYyMV5BMl5BanBnXkFtZTcwODcyODU2Mw@@._V1_UY1200_CR118,0,630,1200_AL_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Lawrence Sher',
-                                role: 'Cinematographer',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BYjkyYWZlZjMtZDBkMS00YWE3LTk5OTgtMWE4Yzg4MGVlODQxXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Producer',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Producer',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Producer',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                              CastPicCard(
-                                name: 'Brad Pitt',
-                                role: 'Producer',
-                                imageUri:
-                                    'https://m.media-amazon.com/images/M/MV5BOTVmYjRkNzctMzk1MC00MGQ3LTg1ZmYtYmE2MTNhYzhlY2JhXkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_.jpg',
-                              ),
-                            ],
-                          ),
+                        FutureBuilder(
+                          future: _getCastCrew("Crew"),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.done) {
+                              return Container(
+                                height: 200,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: snapshot.data,
+                                ),
+                              );
+                            }
+                            else {
+                              return Container(height: 200,);
+                            }
+                          },
                         ),
                         Heading3(title: 'Numbers'),
                         Container(
@@ -501,20 +522,7 @@ class _DetailsPageState extends State<DetailsPage> {
                               return GridView.count(
                                   physics: NeverScrollableScrollPhysics(),
                                   crossAxisCount: 3,
-                                  children: <Widget>[
-                                    CustomCard(
-                                        property: 'Release Date',
-                                        value: '02 OCT\n2019'),
-                                    CustomCard(
-                                        property: 'Runtime', value: '2H 2M'),
-                                    CustomCard(
-                                        property: 'Rating', value: '8.5'),
-                                    CustomCard(
-                                        property: 'Revenue',
-                                        value: '\$1 Billion'),
-                                    CustomCard(
-                                        property: 'Certification', value: 'R'),
-                                  ]);
+                                  children: _getNumbers());
                             },
                           ),
                         ),
