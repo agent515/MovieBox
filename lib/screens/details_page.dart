@@ -94,8 +94,15 @@ class _DetailsPageState extends State<DetailsPage> {
   Widget _getStars() {
     List<Widget> stars = [];
     double rating = data["vote_average"];
-    int fullStars = rating.round() ~/ 2;
-    int halfStars = ((rating - (rating ~/ 2) * 2) / 2).round();
+    int fullStars = rating ~/ 2;
+    var temp = rating - ((rating ~/ 2)*2);
+    int halfStars = 0;
+    if (temp >= 1.5) {
+      fullStars += 1;
+    }
+    else if (temp >= 0.5) {
+      halfStars = 1;
+    }
     int zeroStars = 5 - fullStars - halfStars;
 
     for (int i = 1; i <= fullStars; i++) {
@@ -161,9 +168,10 @@ class _DetailsPageState extends State<DetailsPage> {
       cards.add(card);
     }
     if ( data.containsKey("runtime") ) {
+      var result = Helper.runtimeIntToChar(data["runtime"]);
       card = CustomCard(
         property: "Runtime",
-        value: "2H 2M",
+        value: "${result['hours']}H ${result['minutes']}M",
       );
       cards.add(card);
     }

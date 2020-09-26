@@ -63,4 +63,13 @@ class Helper {
     return result;
   }
 
+  static Map<String, String> runtimeIntToChar(int runtime) {
+    int hours = runtime ~/ 60;
+    int minutes = runtime - ( hours * 60 );
+
+    Map<String, String> result = {"hours": hours.toString(), "minutes" : minutes.toString()};
+    return result;
+
+  }
+
 }
