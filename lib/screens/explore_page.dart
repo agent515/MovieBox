@@ -37,6 +37,13 @@ class _ExplorePageState extends State<ExplorePage> {
     _scrollController.addListener(_scrollListener);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+  }
+
   Future<Map<dynamic, dynamic>> _getData(int pageNo) async {
     if (currentCategory == category.Trending) {
       data = await Api.getMovies(pageNo, 'popular');
