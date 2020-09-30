@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_box/screens/search_page.dart';
 import 'screens/explore_page.dart';
+import 'screens/sign_in.dart';
 import 'screens/watch_list.dart';
 import 'screens/welcome_page.dart';
 import 'package:movie_box/constants/styles.dart';
@@ -28,7 +29,8 @@ class _MovieBoxState extends State<MovieBox> {
   List<Widget> screens =  [
     ExplorePage(),
     SearchPage(),
-    WatchList(),
+//    WatchList(),
+    SignInPage(),
   ];
 
   @override

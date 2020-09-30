@@ -158,12 +158,9 @@ class _DetailsPageState extends State<DetailsPage> {
     print("in see also");
     var result = await Api.getSimilarMovies(data["id"], 1);
     Map<dynamic, dynamic> similarMovies = result;
-    print(similarMovies["results"]);
+    print("Result: ${similarMovies['results']}");
     List<Widget> entityList = [];
-    for (int i = 0; i < similarMovies.length; i++) {
-      print(similarMovies['results'][i]["title"]);
-      print(
-          "https://image.tmdb.org/t/p/w300${similarMovies['results'][i]['poster_path']}");
+    for (int i = 0; i < similarMovies["results"].length; i++) {
       Widget entity = MoviePosterCard(
         id: similarMovies['results'][i]['id'],
         name: similarMovies['results'][i]["title"],
@@ -180,11 +177,15 @@ class _DetailsPageState extends State<DetailsPage> {
     List<Widget> cards = [];
     Widget card;
     if (data.containsKey("release_date")) {
-      var date = Helper.dateIntToChar(data["release_date"]);
-      card = CustomCard(
-        property: "Release Date",
-        value: "${date["day"]} ${date["month"]}\n${date["year"]}",
-      );
+      if (data["release_date"] == "") {
+        card = CustomCard(property: "Release Date", value: "NaN");
+      } else {
+        var date = Helper.dateIntToChar(data["release_date"]);
+        card = CustomCard(
+          property: "Release Date",
+          value: "${date["day"]} ${date["month"]}\n${date["year"]}",
+        );
+      }
       cards.add(card);
     }
     if (data.containsKey("runtime")) {
@@ -215,6 +216,14 @@ class _DetailsPageState extends State<DetailsPage> {
       Widget card = CustomCard(
         property: "Language",
         value: "en",
+      );
+      cards.add(card);
+    }
+    if (data.containsKey("budget")) {
+      var revenue = Helper.revenueIntToChar(data["budget"]);
+      Widget card = CustomCard(
+        property: "Budget",
+        value: "\$${revenue['amount']} ${revenue['scale']}",
       );
       cards.add(card);
     }
@@ -309,9 +318,11 @@ class _DetailsPageState extends State<DetailsPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        data["release_date"]
-                                            .toString()
-                                            .substring(0, 4),
+                                        data["release_date"] == ""
+                                            ? ""
+                                            : data["release_date"]
+                                                .toString()
+                                                .substring(0, 4),
                                         style: kDetailsSubtitleTextStyle,
                                       ),
                                       Padding(
@@ -377,7 +388,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                         if (url == "") {
                                           if (data.containsKey("imdb_id")) {
                                             url =
-                                                "https://www.youtube.com/results?search_query=${data["title"]}";
+                                                Uri.encodeFull("https://www.youtube.com/results?search_query=${data["title"]}");
                                           }
                                         }
                                         print(url);
