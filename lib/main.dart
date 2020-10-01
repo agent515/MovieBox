@@ -8,10 +8,15 @@ import 'package:movie_box/constants/styles.dart';
 
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+bool isLoggedIn;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  isLoggedIn = pref.getString('user-id') ?? false;
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -33,9 +38,13 @@ class _MovieBoxState extends State<MovieBox> {
   List<Widget> screens =  [
     ExplorePage(),
     SearchPage(),
-//    WatchList(),
-    SignInPage(),
+    isLoggedIn ? WatchList() : SignInPage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

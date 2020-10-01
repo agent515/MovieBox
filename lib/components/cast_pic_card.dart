@@ -24,7 +24,7 @@ class CastPicCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         // TODO: Replace NetworkImage placeholder with AssetImage
-                        image: (this.imageUri == "") ? NetworkImage("https://critics.io/img/movies/poster-placeholder.png") :NetworkImage(this.imageUri),
+                        image: (this.imageUri == "") ? AssetImage("images/placeholder/cast-crew-placeholder.png") :NetworkImage(this.imageUri),
                         fit: BoxFit.cover,
                       ),
                     ),

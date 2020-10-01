@@ -188,10 +188,10 @@ class _SearchPageState extends State<SearchPage> {
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(12),
                           topLeft: Radius.circular(12)),
-                      child: Image.network(
-                        (showList[i]["poster_path"] == null)
-                            ? "https://www.theprintworks.com/wp-content/themes/psBella/assets/img/film-poster-placeholder.png"
-                            : "https://image.tmdb.org/t/p/w400${showList[i]["poster_path"]}",
+                      child: (showList[i]["poster_path"] == null)
+                          ? Image.asset('images/placeholder/film-poster-placeholder.png', fit: BoxFit.cover,)
+                          :Image.network(
+                        "https://image.tmdb.org/t/p/w400${showList[i]["poster_path"]}",
                         fit: BoxFit.cover,
                       ),
                     ),

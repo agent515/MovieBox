@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movie_box/services/authServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -9,17 +10,6 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  TextEditingController _emailTextController = TextEditingController();
-  TextEditingController _passwordTextController = TextEditingController();
-  GlobalKey _formKey = GlobalKey<FormState>();
-
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
-
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +21,16 @@ class _SignInPageState extends State<SignInPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Image(
-            image: NetworkImage(
-                'https://www.clipartmax.com/png/middle/206-2060136_movie-camera-clip-art-clipart-free-download-film-camera-clipart-transparent.png'),
-            height: 150,
+          CircleAvatar(
+            backgroundColor: Colors.grey.withOpacity(0.5),
+            radius: 75.0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image(
+                image: AssetImage('images/logo/moviebox_logo.png'),
+                fit: BoxFit.fill,
+              ),
+            ),
           ),
           SizedBox(
             height: 20.0,
@@ -48,8 +44,7 @@ class _SignInPageState extends State<SignInPage> {
                 }
                 else {
                   Scaffold.of(context).showSnackBar(SnackBar(content: Text('Signed in',),),);
-                  print(user.photoURL);
-                  print(user.displayName);
+
                 }
               },
               child: Container(
@@ -57,7 +52,7 @@ class _SignInPageState extends State<SignInPage> {
                 height: 64.0,
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+                    borderRadius: BorderRadius.circular(50.0),
                   ),
                   elevation: 5.0,
                   child: Row(
@@ -68,7 +63,7 @@ class _SignInPageState extends State<SignInPage> {
                         style: TextStyle(
                           decoration: TextDecoration.none,
                           fontFamily: 'SourceSansPro',
-                          fontSize: 12.0,
+                          fontSize: 14.0,
                           fontWeight: FontWeight.w500,
                           color: Colors.blueGrey,
                         ),
@@ -78,7 +73,7 @@ class _SignInPageState extends State<SignInPage> {
                         style: TextStyle(
                           decoration: TextDecoration.none,
                           fontFamily: 'SourceSansPro',
-                          fontSize: 12.0,
+                          fontSize: 20.0,
                           fontWeight: FontWeight.w500,
                           color: Colors.blueGrey,
                         ),
