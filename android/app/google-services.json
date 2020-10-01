@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "361962557262-2l5u85s8o9ihd3mfp5rd91scbo82r2hf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.agent515.movie_box",
+            "certificate_hash": "bc413781639c2a39a4f1445dafac680211ca0ada"
+          }
+        },
+        {
           "client_id": "361962557262-6kk8cia6ta7djm2veg62hr9cvlrv5794.apps.googleusercontent.com",
           "client_type": 3
         }

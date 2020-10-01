@@ -7,8 +7,12 @@ import 'screens/welcome_page.dart';
 import 'package:movie_box/constants/styles.dart';
 
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(MaterialApp(
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'SourceSansPro',
@@ -16,7 +20,7 @@ void main() => runApp(MaterialApp(
         accentColor: Colors.deepPurple,
       ),
       home: WelcomePage(),
-    ));
+    ));}
 
 class MovieBox extends StatefulWidget {
   @override

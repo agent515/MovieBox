@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:movie_box/services/authServices.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInPage extends StatefulWidget {
   @override
@@ -22,6 +23,9 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   Widget build(BuildContext context) {
+    AuthServices auth = AuthServices();
+    User user;
+
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,16 +42,14 @@ class _SignInPageState extends State<SignInPage> {
           Center(
             child: GestureDetector(
               onTap: () async {
-                try {
-                  GoogleSignInAccount user =  await _googleSignIn.signIn();
-                  if (user == null) {
-                    SnackBar(content: Text('Failed to Sign in'));
-                  }
-                  else {
-                    print("success");
-                  }
-                } catch (error) {
-                  print(error);
+                user = await auth.signIn();
+                if (user == null) {
+                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Sign in failed',),),);
+                }
+                else {
+                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Signed in',),),);
+                  print(user.photoURL);
+                  print(user.displayName);
                 }
               },
               child: Container(
@@ -81,7 +83,7 @@ class _SignInPageState extends State<SignInPage> {
                           color: Colors.blueGrey,
                         ),
                       ),
-                      Image.asset('images/logo/google_logo.png', height: 50.0,),
+                      Image.asset('images/logo/google_logo.png', height: 30,),
                     ],
                   ),
                 ),
