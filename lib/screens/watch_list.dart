@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_box/components/my_app_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:movie_box/models/logged_in_user.dart';
 
 class WatchList extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class _WatchListState extends State<WatchList> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
-          MyAppBar(),
+          MyAppBar(icon: Icons.person_outline, callback: () {Provider.of<LoggedInUser>(context, listen: false).signOut();},),
           SizedBox(height: 16.0,),
           Expanded(
             child: ListView(

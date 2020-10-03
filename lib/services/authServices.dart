@@ -11,9 +11,7 @@ class AuthServices {
 
   Future<User> signIn() async {
     user = await GoogleSignIn().signIn();
-
     GoogleSignInAuthentication _googleAuth = await user.authentication;
-
     AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: _googleAuth.accessToken,
       idToken: _googleAuth.idToken,
@@ -21,9 +19,8 @@ class AuthServices {
 
     UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-    print(userCredential.user);
+    print(_auth.currentUser);
     return userCredential.user;
   }
-
 
 }

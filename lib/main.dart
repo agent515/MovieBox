@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:movie_box/screens/search_page.dart';
 import 'screens/explore_page.dart';
-import 'screens/sign_in.dart';
-import 'screens/watch_list.dart';
+import 'screens/auth_page.dart';
 import 'screens/welcome_page.dart';
 import 'package:movie_box/constants/styles.dart';
 
 import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
-bool isLoggedIn;
+import 'models/logged_in_user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences pref = await SharedPreferences.getInstance();
-  isLoggedIn = pref.getString('user-id') ?? false;
-  runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'SourceSansPro',
-        primaryColor: Colors.white,
-        accentColor: Colors.deepPurple,
+  String userId = pref.getString('user-id') ?? null;
+  print("Userid: $userId");
+  runApp(ChangeNotifierProvider(
+    create: (context) => LoggedInUser(userId),
+    child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'SourceSansPro',
+          primaryColor: Colors.white,
+          accentColor: Colors.deepPurple,
+        ),
+        home: WelcomePage(),
       ),
-      home: WelcomePage(),
-    ));}
+  ));}
 
 class MovieBox extends StatefulWidget {
   @override
@@ -33,12 +37,11 @@ class MovieBox extends StatefulWidget {
 }
 
 class _MovieBoxState extends State<MovieBox> {
-
   int index = 0;
   List<Widget> screens =  [
     ExplorePage(),
     SearchPage(),
-    isLoggedIn ? WatchList() : SignInPage(),
+    AuthPage(),
   ];
 
   @override

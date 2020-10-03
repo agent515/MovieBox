@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:movie_box/models/logged_in_user.dart';
 import 'package:movie_box/services/authServices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SignInPage extends StatefulWidget {
@@ -10,7 +11,6 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-
   @override
   Widget build(BuildContext context) {
     AuthServices auth = AuthServices();
@@ -40,11 +40,25 @@ class _SignInPageState extends State<SignInPage> {
               onTap: () async {
                 user = await auth.signIn();
                 if (user == null) {
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Sign in failed',),),);
-                }
-                else {
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Signed in',),),);
-
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Sign in failed',
+                      ),
+                    ),
+                  );
+                } else {
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Signed in',
+                      ),
+                    ),
+                  );
+                  SharedPreferences pref = await SharedPreferences.getInstance();
+                  pref.setString('user-id', user.uid);
+                  Provider.of<LoggedInUser>(context, listen: false).signIn(user);
+                  print(user.displayName);
                 }
               },
               child: Container(
@@ -78,7 +92,10 @@ class _SignInPageState extends State<SignInPage> {
                           color: Colors.blueGrey,
                         ),
                       ),
-                      Image.asset('images/logo/google_logo.png', height: 30,),
+                      Image.asset(
+                        'images/logo/google_logo.png',
+                        height: 30,
+                      ),
                     ],
                   ),
                 ),
