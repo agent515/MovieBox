@@ -9,7 +9,7 @@ install:
   - ./flutter/bin/flutter doctor
 script:
   - #!/bin/bash
-  - eval echo `<travis.conf` | xargs flutter build
+  - eval echo < travis.conf | xargs flutter build
   - ./flutter/bin/flutter test
 cache:
   directories:

@@ -9,7 +9,7 @@
 .history
 .svn/
 
-/local.conf
+./local.conf
 
 # IntelliJ related
 *.iml
