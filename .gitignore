@@ -9,7 +9,7 @@
 .history
 .svn/
 
-/lib/services/API_KEYS.dart
+/local.conf
 
 # IntelliJ related
 *.iml
