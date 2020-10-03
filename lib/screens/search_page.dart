@@ -114,6 +114,7 @@ class _SearchPageState extends State<SearchPage> {
   void dispose() {
     searchTextController.removeListener(_onSearchChanged);
     searchTextController.dispose();
+    debounce.cancel();
     super.dispose();
   }
 
@@ -177,7 +178,7 @@ class _SearchPageState extends State<SearchPage> {
             child: Column(
               children: <Widget>[
                 Expanded(
-                  flex: 4,
+                  flex: 8,
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
@@ -198,7 +199,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 3,
                   child: Column(
                     children: <Widget>[
                       Text(
@@ -261,6 +262,7 @@ class _SearchPageState extends State<SearchPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: TextField(
+                    key: Key('searchField'),
                     cursorColor: Colors.black38,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -294,24 +296,16 @@ class _SearchPageState extends State<SearchPage> {
               future: _listFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-
-                  if (snapshot.data == null) {
-                    return Container(
-                      height: 200,
-                      child: Center(
-                        child: Text(
-                          'NAN',
-                          style: TextStyle(
-                            decoration: TextDecoration.none,
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
+                  if (snapshot.data == null || snapshot.data.length == 0) {
+                    print("in");
+                    return Expanded(
+                      child: NaNMessgae(key: Key('noResults'),),
                     );
                   }
+
                   return Expanded(
                     child: ListView(
+                      key: Key('searchResult'),
                       controller: _scrollController,
                       padding: EdgeInsets.only(top: 0.0),
                       scrollDirection: Axis.vertical,
@@ -365,6 +359,27 @@ class _SearchPageState extends State<SearchPage> {
                 }
               }),
         ],
+      ),
+    );
+  }
+}
+
+class NaNMessgae extends StatelessWidget {
+  const NaNMessgae({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'No results found',
+        key: Key('noResults'),
+        style: TextStyle(
+          decoration: TextDecoration.none,
+          fontFamily: 'SourceSansPro',
+          fontSize: 16,
+        ),
       ),
     );
   }
