@@ -8,7 +8,10 @@ install:
   - git clone https://github.com/flutter/flutter.git -b stable
   - ./flutter/bin/flutter doctor
 script:
-  - eval echo `<travis.conf` | xargs ./flutter/bin/flutter build
+<<<<<<< HEAD
+#  - eval echo `<travis.conf` | xargs flutter build
+=======
+>>>>>>> parent of 7f048bf... Move API_KEYS to environment variables
   - ./flutter/bin/flutter test
 cache:
   directories:
