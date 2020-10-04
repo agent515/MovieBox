@@ -1,6 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movie_box/components/my_app_bar.dart';
 import 'package:movie_box/components/category_box.dart';
+import 'package:movie_box/components/my_app_bar.dart';
 import 'package:movie_box/screens/details_page.dart';
 import 'package:movie_box/services/api.dart';
 
@@ -22,11 +23,13 @@ class _ExplorePageState extends State<ExplorePage> {
   ScrollController _scrollController = ScrollController();
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         pageNo += 1;
-        print("update");
+        print("update and page no is $pageNo");
+        _getCards(pageNo);
       });
     }
   }
@@ -35,6 +38,7 @@ class _ExplorePageState extends State<ExplorePage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_scrollListener);
+    _getCards(pageNo);
   }
 
   @override
@@ -57,7 +61,7 @@ class _ExplorePageState extends State<ExplorePage> {
     return data;
   }
 
-  Future<List<Widget>> _getCards(int pageNo) async {
+  void _getCards(int pageNo) async {
     data = await _getData(pageNo);
     List<Widget> cards;
     print(previousCategory);
@@ -65,8 +69,7 @@ class _ExplorePageState extends State<ExplorePage> {
     if (_cards.length == 0 || previousCategory != currentCategory) {
       cards = [];
       print("in");
-    }
-    else {
+    } else {
       cards = _cards;
     }
 
@@ -109,34 +112,37 @@ class _ExplorePageState extends State<ExplorePage> {
               ),
               Expanded(
                 flex: 1,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      showList[i]["title"].toString(),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.black87,
-                        fontFamily: 'SourceSansPro',
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.7,
+                child: Center(
+                  child: Column(
+                    //Centered the Text in the lower part of the card.
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        showList[i]["title"].toString(),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black87,
+                          fontFamily: 'SourceSansPro',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.7,
+                        ),
                       ),
-                    ),
-                    Text(
-                      showList[i]["release_date"]
-                          .toString()
-                          .substring(0, 4),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontFamily: 'SourceSansPro',
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.5,
-                      ),
-                    )
-                  ],
+                      Text(
+                        showList[i]["release_date"].toString().substring(0, 4),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontFamily: 'SourceSansPro',
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )
             ],
@@ -146,7 +152,13 @@ class _ExplorePageState extends State<ExplorePage> {
       previousCategory = currentCategory;
       cards.add(card);
     }
-    return cards;
+
+    //Check whether parent is in the widget tree or not, if not then don't use setState.
+    if (mounted) {
+      setState(() {
+        _cards = cards;
+      });
+    }
   }
 
   @override
@@ -181,6 +193,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       previousCategory = currentCategory;
                       currentCategory = category.Trending;
                       pageNo = 1;
+                      _cards = [];
+                      _getCards(pageNo);
                     });
                   },
                 ),
@@ -197,6 +211,8 @@ class _ExplorePageState extends State<ExplorePage> {
                       previousCategory = currentCategory;
                       currentCategory = category.TopRated;
                       pageNo = 1;
+                      _cards = [];
+                      _getCards(pageNo);
                     });
                   },
                 ),
@@ -206,67 +222,125 @@ class _ExplorePageState extends State<ExplorePage> {
           SizedBox(
             height: 16,
           ),
-          FutureBuilder(
-              future: _getCards(pageNo),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Expanded(
-                    child: ListView(
-                      controller: _scrollController,
-                      padding: EdgeInsets.only(top: 0.0),
-                      scrollDirection: Axis.vertical,
-                      children: <Widget>[
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth <= 750.0) {
-                              return CustomScrollView(
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  slivers: <Widget>[
-                                    SliverPadding(
-                                      padding: EdgeInsets.all(0.0),
-                                      sliver: SliverGrid.count(
-                                        childAspectRatio: 100 / 220,
-                                        crossAxisCount: 3,
-                                        mainAxisSpacing: 8.0,
-                                        crossAxisSpacing: 8.0,
-                                        children: snapshot.data,
-                                      ),
-                                    ),
-                                  ]);
-                            } else {
-                              return CustomScrollView(
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  slivers: <Widget>[
-                                    SliverPadding(
-                                      padding: EdgeInsets.all(0.0),
-                                      sliver: SliverGrid.count(
-                                        childAspectRatio: 100 / 130,
-                                        crossAxisCount: 5,
-                                        mainAxisSpacing: 8.0,
-                                        crossAxisSpacing: 8.0,
-                                        children: snapshot.data,
-                                      ),
-                                    ),
-                                  ]);
-                            }
-                          },
-                        ),
-                      ],
+          _cards.length != 0
+              ? Expanded(
+                  child: MediaQuery.removePadding(
+                    context: context,
+                    removeTop: true,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth <= 750.0) {
+                          return GridView.builder(
+                            controller: _scrollController,
+                            itemCount: _cards.length + 1,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              childAspectRatio: 100 / 220,
+                              mainAxisSpacing: 8.0,
+                              crossAxisSpacing: 8.0,
+                            ),
+                            itemBuilder: (context, index) {
+                              if (index == _cards.length) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return _cards[index];
+                              }
+                            },
+                          );
+                        } else {
+                          return GridView.builder(
+                            controller: _scrollController,
+                            itemCount: _cards.length + 1,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 5,
+                              childAspectRatio: 100 / 130,
+                              mainAxisSpacing: 8.0,
+                              crossAxisSpacing: 8.0,
+                            ),
+                            itemBuilder: (context, index) {
+                              if (index == _cards.length) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else {
+                                return _cards[index];
+                              }
+                            },
+                          );
+                        }
+                      },
                     ),
-                  );
-                } else {
-                  return Container(
-                    height: MediaQuery.of(context).size.height * 0.65,
-                      child: Center(child: CircularProgressIndicator())
-                  );
-                }
-              }),
+                  ),
+                )
+              : Container(
+                  height: MediaQuery.of(context).size.height * 0.65,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
         ],
       ),
     );
   }
 }
+
+// GridView.count(
+// controller: _scrollController,
+// primary: false,
+// crossAxisCount: 5,
+// childAspectRatio: 100 / 130,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// shrinkWrap: true,
+// children: _cards,
+// );
+
+// GridView.count(
+// controller: _scrollController,
+// primary: false,
+// crossAxisCount: 3,
+// childAspectRatio: 100 / 220,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// shrinkWrap: true,
+// children: _cards,
+// );
+
+// CustomScrollView(
+// primary: false,
+// scrollDirection: Axis.vertical,
+// shrinkWrap: true,
+// slivers: <Widget>[
+// SliverPadding(
+// padding: EdgeInsets.all(0.0),
+// sliver: SliverGrid.count(
+// childAspectRatio: 100 / 220,
+// crossAxisCount: 3,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// children: snapshot.data,
+// ),
+// ),
+// ]);
+
+//
+// CustomScrollView(
+// primary: false,
+// scrollDirection: Axis.vertical,
+// shrinkWrap: true,
+// slivers: <Widget>[
+// SliverPadding(
+// padding: EdgeInsets.all(0.0),
+// sliver: SliverGrid.count(
+// childAspectRatio: 100 / 130,
+// crossAxisCount: 5,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// children: snapshot.data,
+// ),
+// ),
+// ])
