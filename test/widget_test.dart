@@ -9,22 +9,58 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:movie_box/main.dart';
+import 'package:movie_box/screens/search_page.dart';
+import 'package:image_test_utils/image_test_utils.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MovieBox());
+  Widget makeTestableWidget({Widget child}) {
+    return MaterialApp(
+      home: child,
+    );
+  }
+  
+  group('Search', () {
+    testWidgets('Non-empty search, results found', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      provideMockedNetworkImages(() async {
+        await tester.pumpWidget( makeTestableWidget(child: SearchPage()));
+        var search = find.byKey(Key('searchField'));
+        await tester.enterText(search, 'Joker');
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+        await tester.pump();
+        expect(find.byKey(Key('searchResult')), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    });
+
+    testWidgets('Empty search, results found', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      provideMockedNetworkImages(() async {
+        await tester.pumpWidget( makeTestableWidget(child: SearchPage()));
+        var search = find.byKey(Key('searchField'));
+        await tester.enterText(search, '');
+
+        await tester.pump();
+        expect(find.byKey(Key('searchResult')), findsOneWidget);
+
+      });
+
+    });
+
+    testWidgets('Non-empty Search, results not found', (WidgetTester tester) async {
+      // Build our app and trigger a frame.
+      provideMockedNetworkImages(() async {
+        await tester.pumpWidget( makeTestableWidget(child: SearchPage()));
+        var search = find.byKey(Key('searchField'));
+        await tester.enterText(search, 'kabsndbdjbd');
+
+        await tester.pump();
+        // TODO: Test for- NaN message on failed search
+        // await expectLater(find.byType(NaNMessgae), findsOneWidget);
+
+      });
+
+    });
   });
 }
