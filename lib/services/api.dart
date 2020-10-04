@@ -1,7 +1,11 @@
-import 'network_handler.dart';
-import 'API_KEYS.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+// import 'API_KEYS.dart';
+import 'package:http/http.dart' as http;
+
+import 'network_handler.dart';
+
+final String apiKeyTMDB = "70b3fe419bc1af900e38f6e2fa89c1cf";
 
 class Api {
   static Future<dynamic> getMovies(int pageNo, String category) async {
@@ -49,21 +53,24 @@ class Api {
 
   static Future<dynamic> getCastCrew(int id) async {
     // https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB
-    String url = "https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB";
+    String url =
+        "https://api.themoviedb.org/3/movie/$id/credits?api_key=$apiKeyTMDB";
     Map<dynamic, dynamic> response = await NetworkHandler.httpRequest(url);
     return response;
   }
 
   static Future<dynamic> getSimilarMovies(int id, int pageNo) async {
     // https://api.themoviedb.org/3/movie/475557/similar?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=1
-    String url = "https://api.themoviedb.org/3/movie/$id/similar?api_key=$apiKeyTMDB&language=en-US&page=$pageNo";
+    String url =
+        "https://api.themoviedb.org/3/movie/$id/similar?api_key=$apiKeyTMDB&language=en-US&page=$pageNo";
     Map<dynamic, dynamic> response = await NetworkHandler.httpRequest(url);
     return response;
   }
 
   static Future<dynamic> getReviews(int id, {int pageNo = 1}) async {
     // https://api.themoviedb.org/3/movie/475557/reviews?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=1
-    String url = "https://api.themoviedb.org/3/movie/$id/reviews?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=$pageNo";
+    String url =
+        "https://api.themoviedb.org/3/movie/$id/reviews?api_key=70b3fe419bc1af900e38f6e2fa89c1cf&language=en-US&page=$pageNo";
     Map<dynamic, dynamic> response = await NetworkHandler.httpRequest(url);
     return response;
   }
