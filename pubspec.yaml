@@ -41,6 +41,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  image_test_utils: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,7 +77,7 @@ flutter:
        - asset: fonts/SourceSansPro-BlackItalic.ttf
        - asset: fonts/SourceSansPro-BoldItalic.ttf
        - asset: fonts/SourceSansPro-ExtraLight.ttf
-       - asset: fonts/SourceSansPro-italic.ttf
+       - asset: fonts/SourceSansPro-Italic.ttf
          style: italic
        - asset: fonts/SourceSansPro-Bold.ttf
          weight: 700
