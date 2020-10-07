@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_box/components/category_box.dart';
+import 'package:movie_box/components/movie_card.dart';
 import 'package:movie_box/components/my_app_bar.dart';
 import 'package:movie_box/screens/details_page.dart';
 import 'package:movie_box/services/api.dart';
@@ -57,7 +58,7 @@ class _ExplorePageState extends State<ExplorePage> {
     if (previousCategory != currentCategory) {
       showList = [];
     }
-    showList.addAll(data["results"]);
+    showList = data["results"];
     return data;
   }
 
@@ -74,81 +75,19 @@ class _ExplorePageState extends State<ExplorePage> {
     }
 
     for (int i = 0; i < showList.length; i++) {
-      Widget card = GestureDetector(
-        onTap: () async {
-          var details = await Api.getDetails(showList[i]['id'], 'movie');
-          Navigator.push(
+      Widget card = MovieCard(
+          show: showList[i],
+          onTap: () async {
+            var details = await Api.getDetails(showList[i]['id'], 'movie');
+            Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => DetailsPage(
-                        data: details,
-                      )));
-        },
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 4,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Colors.deepPurple[900],
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(12),
-                        topLeft: Radius.circular(12)),
-                    child: Image.network(
-//                    'https://cdn.shopify.com/s/files/1/0969/9128/products/Joker_-_Put_On_A_Happy_Face_-_Joaquin_Phoenix_-_Hollywood_English_Movie_Poster_3_6cb8f765-be3f-4cb8-bb4e-ead8c435e42e.jpg?v=1579504964',
-                      "https://image.tmdb.org/t/p/w400${showList[i]["poster_path"]}",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                builder: (context) => DetailsPage(
+                  data: details,
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Center(
-                  child: Column(
-                    //Centered the Text in the lower part of the card.
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        showList[i]["title"].toString(),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black87,
-                          fontFamily: 'SourceSansPro',
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.7,
-                        ),
-                      ),
-                      Text(
-                        showList[i]["release_date"].toString().substring(0, 4),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: 'SourceSansPro',
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
+            );
+          });
       previousCategory = currentCategory;
       cards.add(card);
     }

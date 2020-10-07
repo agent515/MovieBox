@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:movie_box/components/my_app_bar.dart';
-import 'package:movie_box/screens/details_page.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:movie_box/components/movie_card.dart';
+import 'package:movie_box/components/my_app_bar.dart';
+import 'package:movie_box/screens/details_page.dart';
 import 'package:movie_box/services/api.dart';
 
 class SearchPage extends StatefulWidget {
@@ -13,8 +14,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   Map<dynamic, dynamic> searchResults;
   List<dynamic> showList = [];
-  bool updated = true;
-  Future<List<Widget>> _listFuture;
+  bool updated = false;
+  List<Widget> _searchedCards = [];
   List<dynamic> recentList = [
     {
       "popularity": 0.6,
@@ -46,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
       "backdrop_path": null,
       "adult": false,
       "overview":
-          "Stand-alone project centering on The Joker from the 2016 film 'Suicide Squad'.",
+      "Stand-alone project centering on The Joker from the 2016 film 'Suicide Squad'.",
       "poster_path": null
     },
     {
@@ -63,7 +64,7 @@ class _SearchPageState extends State<SearchPage> {
       "title": "King, Queen and Joker",
       "vote_average": 5.3,
       "overview":
-          "King, Queen, Joker is a 1921 silent feature farce written and directed by Sydney Chaplin, Charlie's older brother. The picture was produced by Famous Players-Lasky and distributed through Paramount Pictures. The film was shot in England, France and the United States.\r Less than a reel of this film, the barbershop sequence, survives at the British Film Institute. It was included in the 2011 Criterion DVD special two disc edition release of The Great Dictator.",
+      "King, Queen, Joker is a 1921 silent feature farce written and directed by Sydney Chaplin, Charlie's older brother. The picture was produced by Famous Players-Lasky and distributed through Paramount Pictures. The film was shot in England, France and the United States.\r Less than a reel of this film, the barbershop sequence, survives at the British Film Institute. It was included in the 2011 Criterion DVD special two disc edition release of The Great Dictator.",
       "release_date": "1921-05-15"
     },
     {
@@ -82,21 +83,23 @@ class _SearchPageState extends State<SearchPage> {
       "overview":
           "The story of four friends who decide to start a Auto Mechanic story.",
       "release_date": "2000-08-16"
-    }
+    },
   ];
   int pageNo = 1;
+  bool canUpdate = false;
 
   TextEditingController searchTextController = TextEditingController();
   ScrollController _scrollController = ScrollController();
   Timer debounce;
 
   void _scrollListener() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       setState(() {
         pageNo += 1;
-        refreshList();
         updated = true;
+        updateAndGetList();
       });
       print("update");
     }
@@ -107,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
     searchTextController.addListener(_onSearchChanged);
     _scrollController.addListener(_scrollListener);
     super.initState();
-    _listFuture = updateAndGetList();
+    updateAndGetList();
   }
 
   @override
@@ -122,124 +125,99 @@ class _SearchPageState extends State<SearchPage> {
     if (debounce?.isActive ?? false) debounce.cancel();
     debounce = Timer(const Duration(milliseconds: 500), () async {
       showList = [];
-      refreshList();
+      updateAndGetList();
     });
   }
 
-  void refreshList() {
-    setState(() {
-      _listFuture = updateAndGetList();
-    });
-  }
+  // void refreshList() {
+  //   setState(() {
+  //     updateAndGetList();
+  //   });
+  // }
 
-  Future<List<Widget>> updateAndGetList() async {
+  void updateAndGetList() async {
     String query = searchTextController.text;
+    List<Widget> cards = [];
+
     if (searchTextController.text == "") {
       setState(() {
         showList = recentList;
       });
     } else {
       var result = await Api.search(query, 'movie', pageNo: pageNo);
+
       searchResults = result;
+
       print(searchResults['results']);
-      if (updated) {
-        setState(() {
-          showList.addAll(searchResults['results']);
-          updated = false;
-        });
+
+      //Check whether there are more results, not
+      if (searchResults['results'].length == 0) {
+        if (mounted) {
+          setState(() {
+            print('inside if mounted set state');
+            canUpdate = false;
+          });
+        }
+      } else {
+        print('inside else');
+        if (mounted) {
+          setState(() {
+            print('inside else mounted set state');
+            canUpdate = true;
+          });
+        }
       }
-      else {
-        setState(() {
-          showList = searchResults['results'];
-        });
+
+      showList = searchResults['results'];
+      // if (updated) {
+      //       //   setState(() {
+      //       //     showList.addAll(searchResults['results']);
+      //       //     updated = true;
+      //       //   });
+      //       // } else {
+      //       //   setState(() {
+      //       //     showList = searchResults['results'];
+      //       //   });
+      //       // }
+
+      if (updated) {
+        cards = _searchedCards;
+      } else {
+        cards = [];
       }
     }
 
-    List<Widget> cards = [];
-
     for (int i = 0; i < showList.length; i++) {
+      print(i);
       try {
-        Widget card = GestureDetector(
+        Widget card = MovieCard(
+          show: showList[i],
           onTap: () async {
             var details = await Api.getDetails(showList[i]['id'], 'movie');
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailsPage(
-                  data: details,
-                ),
+                builder: (context) =>
+                    DetailsPage(
+                      data: details,
+                    ),
               ),
             );
           },
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  flex: 8,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Colors.deepPurple[900],
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(12),
-                          topLeft: Radius.circular(12)),
-                      child: (showList[i]["poster_path"] == null)
-                          ? Image.asset('images/placeholder/film-poster-placeholder.png', fit: BoxFit.cover,)
-                          :Image.network(
-                        "https://image.tmdb.org/t/p/w400${showList[i]["poster_path"]}",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        showList[i]["title"].toString(),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black87,
-                          fontFamily: 'SourceSansPro',
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.7,
-                        ),
-                      ),
-                      Text(
-                        showList[i]["release_date"] == "" ? "" : showList[i]["release_date"].toString().substring(0, 4),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: 'SourceSansPro',
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
         );
-
         cards.add(card);
       } catch (e) {
         print(e.message);
       }
     }
+
     print("in searchresult");
-    return cards;
+
+    if (mounted) {
+      setState(() {
+        _searchedCards = cards;
+      });
+    }
   }
 
   @override
@@ -275,6 +253,7 @@ class _SearchPageState extends State<SearchPage> {
                     onChanged: (String query) {},
                     onEditingComplete: () {
                       print(searchTextController.text);
+                      FocusManager.instance.primaryFocus.unfocus();
                     },
                     enableSuggestions: true,
                     autofocus: true,
@@ -292,72 +271,78 @@ class _SearchPageState extends State<SearchPage> {
           SizedBox(
             height: 16.0,
           ),
-          FutureBuilder(
-              future: _listFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.data == null || snapshot.data.length == 0) {
-                    print("in");
-                    return Expanded(
-                      child: NaNMessgae(key: Key('noResults'),),
+          _searchedCards.length != 0
+              ? Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth <= 750.0) {
+                    return GridView.builder(
+                      controller: _scrollController,
+                      itemCount: _searchedCards.length + 1,
+                      gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 100 / 220,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        // print(index);
+                        if (index == _searchedCards.length) {
+                          if (canUpdate) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return _searchedCards[index];
+                        }
+                      },
+                    );
+                  } else {
+                    return GridView.builder(
+                      controller: _scrollController,
+                      itemCount: _searchedCards.length + 1,
+                      gridDelegate:
+                      SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        childAspectRatio: 100 / 130,
+                        mainAxisSpacing: 8.0,
+                        crossAxisSpacing: 8.0,
+                      ),
+                      itemBuilder: (context, index) {
+                        if (index == _searchedCards.length) {
+                          if (canUpdate) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        } else {
+                          return _searchedCards[index];
+                        }
+                      },
                     );
                   }
-
-                  return Expanded(
-                    child: ListView(
-                      key: Key('searchResult'),
-                      controller: _scrollController,
-                      padding: EdgeInsets.only(top: 0.0),
-                      scrollDirection: Axis.vertical,
-                      children: <Widget>[
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth <= 750.0) {
-                              return CustomScrollView(
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  slivers: <Widget>[
-                                    SliverPadding(
-                                      padding: EdgeInsets.all(0.0),
-                                      sliver: SliverGrid.count(
-                                        childAspectRatio: 100 / 220,
-                                        crossAxisCount: 3,
-                                        mainAxisSpacing: 8.0,
-                                        crossAxisSpacing: 8.0,
-                                        children: snapshot.data,
-                                      ),
-                                    ),
-                                  ]);
-                            } else {
-                              return CustomScrollView(
-                                  primary: false,
-                                  scrollDirection: Axis.vertical,
-                                  shrinkWrap: true,
-                                  slivers: <Widget>[
-                                    SliverPadding(
-                                      padding: EdgeInsets.all(0.0),
-                                      sliver: SliverGrid.count(
-                                        childAspectRatio: 100 / 130,
-                                        crossAxisCount: 5,
-                                        mainAxisSpacing: 8.0,
-                                        crossAxisSpacing: 8.0,
-                                        children: snapshot.data,
-                                      ),
-                                    ),
-                                  ]);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Container(
-                      height: MediaQuery.of(context).size.height * 0.65,
-                      child: Center(child: CircularProgressIndicator()));
-                }
-              }),
+                },
+              ),
+            ),
+          )
+              : Container(
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.65,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
         ],
       ),
     );
@@ -384,3 +369,83 @@ class NaNMessgae extends StatelessWidget {
     );
   }
 }
+
+// FutureBuilder(
+// future: _listFuture,
+// builder: (context, snapshot) {
+// if (snapshot.connectionState == ConnectionState.done) {
+// if (snapshot.data == null || snapshot.data.length == 0) {
+// print("in");
+// return Expanded(
+// child: NaNMessgae(
+// key: Key('noResults'),
+// ),
+// );
+// }
+//
+// return Expanded(
+// child: ListView(
+// key: Key('searchResult'),
+// controller: _scrollController,
+// padding: EdgeInsets.only(top: 0.0),
+// scrollDirection: Axis.vertical,
+// children: <Widget>[
+// LayoutBuilder(
+// builder: (context, constraints) {
+// if (constraints.maxWidth <= 750.0) {
+// return CustomScrollView(
+// primary: false,
+// scrollDirection: Axis.vertical,
+// shrinkWrap: true,
+// slivers: <Widget>[
+// SliverPadding(
+// padding: EdgeInsets.all(0.0),
+// sliver: SliverGrid.count(
+// childAspectRatio: 100 / 220,
+// crossAxisCount: 3,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// children: snapshot.data,
+// ),
+// ),
+// ]);
+// } else {
+// return CustomScrollView(
+// primary: false,
+// scrollDirection: Axis.vertical,
+// shrinkWrap: true,
+// slivers: <Widget>[
+// SliverPadding(
+// padding: EdgeInsets.all(0.0),
+// sliver: SliverGrid.count(
+// childAspectRatio: 100 / 130,
+// crossAxisCount: 5,
+// mainAxisSpacing: 8.0,
+// crossAxisSpacing: 8.0,
+// children: snapshot.data,
+// ),
+// ),
+// ]);
+// }
+// },
+// ),
+// ],
+// ),
+// );
+// } else {
+// return Container(
+// height: MediaQuery.of(context).size.height * 0.65,
+// child: Center(child: CircularProgressIndicator()));
+// }
+// }),
+
+// Changes:
+// - Added FadeInImage transitions while fetching image from network image.
+// - Refactored and created a new widget: "MovieCard" and added the implementation to necessary pages.
+// - Added placeholder image for movie with no posters.
+// - Made the change to showList; no there are no reptitions in the list.
+// - Search Page:
+// 1. Fixed the scroll glitch
+// 2. Keyboard loses focus after editing is complete.
+// 3. The search now stops showing circular progess indicator if there is no new entries
+// 4. Refactored and cleaned the code like the explore page.
