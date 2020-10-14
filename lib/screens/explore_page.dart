@@ -65,11 +65,8 @@ class _ExplorePageState extends State<ExplorePage> {
   void _getCards(int pageNo) async {
     data = await _getData(pageNo);
     List<Widget> cards;
-    print(previousCategory);
-    print(currentCategory);
     if (_cards.length == 0 || previousCategory != currentCategory) {
       cards = [];
-      print("in");
     } else {
       cards = _cards;
     }
@@ -226,60 +223,3 @@ class _ExplorePageState extends State<ExplorePage> {
     );
   }
 }
-
-// GridView.count(
-// controller: _scrollController,
-// primary: false,
-// crossAxisCount: 5,
-// childAspectRatio: 100 / 130,
-// mainAxisSpacing: 8.0,
-// crossAxisSpacing: 8.0,
-// shrinkWrap: true,
-// children: _cards,
-// );
-
-// GridView.count(
-// controller: _scrollController,
-// primary: false,
-// crossAxisCount: 3,
-// childAspectRatio: 100 / 220,
-// mainAxisSpacing: 8.0,
-// crossAxisSpacing: 8.0,
-// shrinkWrap: true,
-// children: _cards,
-// );
-
-// CustomScrollView(
-// primary: false,
-// scrollDirection: Axis.vertical,
-// shrinkWrap: true,
-// slivers: <Widget>[
-// SliverPadding(
-// padding: EdgeInsets.all(0.0),
-// sliver: SliverGrid.count(
-// childAspectRatio: 100 / 220,
-// crossAxisCount: 3,
-// mainAxisSpacing: 8.0,
-// crossAxisSpacing: 8.0,
-// children: snapshot.data,
-// ),
-// ),
-// ]);
-
-//
-// CustomScrollView(
-// primary: false,
-// scrollDirection: Axis.vertical,
-// shrinkWrap: true,
-// slivers: <Widget>[
-// SliverPadding(
-// padding: EdgeInsets.all(0.0),
-// sliver: SliverGrid.count(
-// childAspectRatio: 100 / 130,
-// crossAxisCount: 5,
-// mainAxisSpacing: 8.0,
-// crossAxisSpacing: 8.0,
-// children: snapshot.data,
-// ),
-// ),
-// ])

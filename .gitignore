@@ -9,11 +9,7 @@
 .history
 .svn/
 
-<<<<<<< HEAD
 ./local.conf
-=======
-/lib/services/API_KEYS.dart
->>>>>>> parent of 7f048bf... Move API_KEYS to environment variables
 
 # IntelliJ related
 *.iml

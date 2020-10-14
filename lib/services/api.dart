@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-// import 'API_KEYS.dart';
+import 'API_KEYS.dart';
 import 'package:http/http.dart' as http;
 
 import 'network_handler.dart';
-
-final String apiKeyTMDB = "70b3fe419bc1af900e38f6e2fa89c1cf";
 
 class Api {
   static Future<dynamic> getMovies(int pageNo, String category) async {
