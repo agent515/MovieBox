@@ -685,11 +685,7 @@ packages:
       name: vm_service
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< Updated upstream
     version: "5.2.0"
-=======
-    version: "4.2.0"
->>>>>>> Stashed changes
   watcher:
     dependency: transitive
     description:
@@ -724,11 +720,7 @@ packages:
       name: xdg_directories
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< Updated upstream
     version: "0.1.2"
-=======
-    version: "0.1.0"
->>>>>>> Stashed changes
   yaml:
     dependency: transitive
     description:
