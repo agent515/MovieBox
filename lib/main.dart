@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'models/logged_in_user.dart';
 import 'screens/auth_page.dart';
 import 'screens/explore_page.dart';
-import 'screens/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +25,7 @@ void main() async {
         primaryColor: Colors.white,
         accentColor: Colors.deepPurple,
       ),
-      home: WelcomePage(),
+      home: MovieBox(),
     ),
   ));
 }

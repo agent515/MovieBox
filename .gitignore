@@ -9,7 +9,8 @@
 .history
 .svn/
 
-./local.conf
+.vscode
+local.conf
 
 # IntelliJ related
 *.iml
