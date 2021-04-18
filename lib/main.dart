@@ -1,14 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
-import 'package:movie_box/constants/styles.dart';
-import 'package:movie_box/screens/search_page.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+import 'package:movie_box/core/constants/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'models/logged_in_user.dart';
-import 'screens/auth_page.dart';
-import 'screens/explore_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,17 +10,14 @@ void main() async {
   SharedPreferences pref = await SharedPreferences.getInstance();
   String userId = pref.getString('user-id') ?? null;
   print("Userid: $userId");
-  runApp(ChangeNotifierProvider(
-    create: (context) => LoggedInUser(userId),
-    child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'SourceSansPro',
-        primaryColor: Colors.white,
-        accentColor: Colors.deepPurple,
-      ),
-      home: MovieBox(),
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    theme: ThemeData(
+      fontFamily: 'SourceSansPro',
+      primaryColor: Colors.white,
+      accentColor: Colors.deepPurple,
     ),
+    home: MovieBox(),
   ));
 }
 
@@ -37,11 +28,7 @@ class MovieBox extends StatefulWidget {
 
 class _MovieBoxState extends State<MovieBox> {
   int index = 0;
-  List<Widget> screens = [
-    ExplorePage(),
-    SearchPage(),
-    AuthPage(),
-  ];
+  List<Widget> screens = [];
 
   @override
   void initState() {
@@ -75,23 +62,18 @@ class _MovieBoxState extends State<MovieBox> {
             icon: Icon(
               Icons.explore,
             ),
-            title: Text(
-              'Explore',
-            ),
+            label: 'Explore',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.search,
-            ),
-            title: Text('Search'),
-          ),
+              icon: Icon(
+                Icons.search,
+              ),
+              label: 'Search'),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.list,
             ),
-            title: Text(
-              'WatchList',
-            ),
+            label: 'WatchList',
           ),
         ],
       ),
