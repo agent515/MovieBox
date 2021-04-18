@@ -21,8 +21,7 @@ class MovieRepositoryImpl extends MovieRepository {
       String region,
       int releaseYear,
       bool includeAdult = false}) async {
-    // TODO: implement getMovie
-    throw UnimplementedError();
+    return null;
   }
 
   @override
