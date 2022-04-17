@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
+Watchlist _$WatchlistFromJson(Map<String, dynamic> json) {
+  return _Watchlist.fromJson(json);
+}
+
 /// @nodoc
 class _$WatchlistTearOff {
   const _$WatchlistTearOff();
@@ -23,6 +27,10 @@ class _$WatchlistTearOff {
       name: name,
       items: items,
     );
+  }
+
+  Watchlist fromJson(Map<String, Object?> json) {
+    return Watchlist.fromJson(json);
   }
 }
 
@@ -34,6 +42,7 @@ mixin _$Watchlist {
   String get name => throw _privateConstructorUsedError;
   List<WatchlistItem> get items => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $WatchlistCopyWith<Watchlist> get copyWith =>
       throw _privateConstructorUsedError;
@@ -109,9 +118,12 @@ class __$WatchlistCopyWithImpl<$Res> extends _$WatchlistCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$_Watchlist implements _Watchlist {
   const _$_Watchlist({required this.name, required this.items});
+
+  factory _$_Watchlist.fromJson(Map<String, dynamic> json) =>
+      _$$_WatchlistFromJson(json);
 
   @override
   final String name;
@@ -142,12 +154,20 @@ class _$_Watchlist implements _Watchlist {
   @override
   _$WatchlistCopyWith<_Watchlist> get copyWith =>
       __$WatchlistCopyWithImpl<_Watchlist>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_WatchlistToJson(this);
+  }
 }
 
 abstract class _Watchlist implements Watchlist {
   const factory _Watchlist(
       {required String name,
       required List<WatchlistItem> items}) = _$_Watchlist;
+
+  factory _Watchlist.fromJson(Map<String, dynamic> json) =
+      _$_Watchlist.fromJson;
 
   @override
   String get name;

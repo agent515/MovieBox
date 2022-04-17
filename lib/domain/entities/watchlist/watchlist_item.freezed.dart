@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
+WatchlistItem _$WatchlistItemFromJson(Map<String, dynamic> json) {
+  return _WatchlistItem.fromJson(json);
+}
+
 /// @nodoc
 class _$WatchlistItemTearOff {
   const _$WatchlistItemTearOff();
@@ -30,6 +34,10 @@ class _$WatchlistItemTearOff {
       status: status,
     );
   }
+
+  WatchlistItem fromJson(Map<String, Object?> json) {
+    return WatchlistItem.fromJson(json);
+  }
 }
 
 /// @nodoc
@@ -42,6 +50,7 @@ mixin _$WatchlistItem {
   MediaType get type => throw _privateConstructorUsedError;
   WatchListItemStatus get status => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $WatchlistItemCopyWith<WatchlistItem> get copyWith =>
       throw _privateConstructorUsedError;
@@ -142,13 +151,16 @@ class __$WatchlistItemCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$_WatchlistItem implements _WatchlistItem {
   const _$_WatchlistItem(
       {required this.id,
       required this.name,
       required this.type,
       required this.status});
+
+  factory _$_WatchlistItem.fromJson(Map<String, dynamic> json) =>
+      _$$_WatchlistItemFromJson(json);
 
   @override
   final int id;
@@ -187,6 +199,11 @@ class _$_WatchlistItem implements _WatchlistItem {
   @override
   _$WatchlistItemCopyWith<_WatchlistItem> get copyWith =>
       __$WatchlistItemCopyWithImpl<_WatchlistItem>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$_WatchlistItemToJson(this);
+  }
 }
 
 abstract class _WatchlistItem implements WatchlistItem {
@@ -195,6 +212,9 @@ abstract class _WatchlistItem implements WatchlistItem {
       required String name,
       required MediaType type,
       required WatchListItemStatus status}) = _$_WatchlistItem;
+
+  factory _WatchlistItem.fromJson(Map<String, dynamic> json) =
+      _$_WatchlistItem.fromJson;
 
   @override
   int get id;
