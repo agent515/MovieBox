@@ -8,9 +8,9 @@ import 'package:movie_box/domain/entities/watchlist/watchlist.dart';
 
 @Singleton(as: RemoteDataSource)
 class RemoteDataSourceImpl implements RemoteDataSource {
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  RemoteDataSourceImpl(this._firestore);
+  RemoteDataSourceImpl();
 
   @override
   Future<Either<Failure, List<Watchlist>>> getWatchlistForUser(

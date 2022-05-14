@@ -10,9 +10,9 @@ import 'package:movie_box/domain/entities/sign_in/sign_in_with_email_password_re
 
 @Singleton(as: AuthenticationDataSource)
 class AuthenticationDataSourceImpl implements AuthenticationDataSource {
-  final FirebaseAuth _firebaseAuth;
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  AuthenticationDataSourceImpl(this._firebaseAuth);
+  AuthenticationDataSourceImpl();
 
   @override
   Future<Either<Failure, void>> signInWithEmailPassword(
