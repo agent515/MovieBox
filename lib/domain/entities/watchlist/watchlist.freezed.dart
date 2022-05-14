@@ -22,10 +22,18 @@ Watchlist _$WatchlistFromJson(Map<String, dynamic> json) {
 class _$WatchlistTearOff {
   const _$WatchlistTearOff();
 
-  _Watchlist call({required String name, required List<WatchlistItem> items}) {
+  _Watchlist call(
+      {required String id,
+      required String name,
+      required List<WatchlistItem> items,
+      required DateTime createdAt,
+      required DateTime updatedAt}) {
     return _Watchlist(
+      id: id,
       name: name,
       items: items,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -39,8 +47,11 @@ const $Watchlist = _$WatchlistTearOff();
 
 /// @nodoc
 mixin _$Watchlist {
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   List<WatchlistItem> get items => throw _privateConstructorUsedError;
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  DateTime get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -52,7 +63,12 @@ mixin _$Watchlist {
 abstract class $WatchlistCopyWith<$Res> {
   factory $WatchlistCopyWith(Watchlist value, $Res Function(Watchlist) then) =
       _$WatchlistCopyWithImpl<$Res>;
-  $Res call({String name, List<WatchlistItem> items});
+  $Res call(
+      {String id,
+      String name,
+      List<WatchlistItem> items,
+      DateTime createdAt,
+      DateTime updatedAt});
 }
 
 /// @nodoc
@@ -65,10 +81,17 @@ class _$WatchlistCopyWithImpl<$Res> implements $WatchlistCopyWith<$Res> {
 
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = freezed,
     Object? items = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_value.copyWith(
+      id: id == freezed
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: name == freezed
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -77,6 +100,14 @@ class _$WatchlistCopyWithImpl<$Res> implements $WatchlistCopyWith<$Res> {
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<WatchlistItem>,
+      createdAt: createdAt == freezed
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: updatedAt == freezed
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -87,7 +118,12 @@ abstract class _$WatchlistCopyWith<$Res> implements $WatchlistCopyWith<$Res> {
           _Watchlist value, $Res Function(_Watchlist) then) =
       __$WatchlistCopyWithImpl<$Res>;
   @override
-  $Res call({String name, List<WatchlistItem> items});
+  $Res call(
+      {String id,
+      String name,
+      List<WatchlistItem> items,
+      DateTime createdAt,
+      DateTime updatedAt});
 }
 
 /// @nodoc
@@ -101,10 +137,17 @@ class __$WatchlistCopyWithImpl<$Res> extends _$WatchlistCopyWithImpl<$Res>
 
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = freezed,
     Object? items = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(_Watchlist(
+      id: id == freezed
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       name: name == freezed
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -113,6 +156,14 @@ class __$WatchlistCopyWithImpl<$Res> extends _$WatchlistCopyWithImpl<$Res>
           ? _value.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<WatchlistItem>,
+      createdAt: createdAt == freezed
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: updatedAt == freezed
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -120,19 +171,30 @@ class __$WatchlistCopyWithImpl<$Res> extends _$WatchlistCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$_Watchlist implements _Watchlist {
-  const _$_Watchlist({required this.name, required this.items});
+  const _$_Watchlist(
+      {required this.id,
+      required this.name,
+      required this.items,
+      required this.createdAt,
+      required this.updatedAt});
 
   factory _$_Watchlist.fromJson(Map<String, dynamic> json) =>
       _$$_WatchlistFromJson(json);
 
   @override
+  final String id;
+  @override
   final String name;
   @override
   final List<WatchlistItem> items;
+  @override
+  final DateTime createdAt;
+  @override
+  final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'Watchlist(name: $name, items: $items)';
+    return 'Watchlist(id: $id, name: $name, items: $items, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -140,15 +202,21 @@ class _$_Watchlist implements _Watchlist {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _Watchlist &&
+            const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.name, name) &&
-            const DeepCollectionEquality().equals(other.items, items));
+            const DeepCollectionEquality().equals(other.items, items) &&
+            const DeepCollectionEquality().equals(other.createdAt, createdAt) &&
+            const DeepCollectionEquality().equals(other.updatedAt, updatedAt));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
+      const DeepCollectionEquality().hash(id),
       const DeepCollectionEquality().hash(name),
-      const DeepCollectionEquality().hash(items));
+      const DeepCollectionEquality().hash(items),
+      const DeepCollectionEquality().hash(createdAt),
+      const DeepCollectionEquality().hash(updatedAt));
 
   @JsonKey(ignore: true)
   @override
@@ -163,16 +231,25 @@ class _$_Watchlist implements _Watchlist {
 
 abstract class _Watchlist implements Watchlist {
   const factory _Watchlist(
-      {required String name,
-      required List<WatchlistItem> items}) = _$_Watchlist;
+      {required String id,
+      required String name,
+      required List<WatchlistItem> items,
+      required DateTime createdAt,
+      required DateTime updatedAt}) = _$_Watchlist;
 
   factory _Watchlist.fromJson(Map<String, dynamic> json) =
       _$_Watchlist.fromJson;
 
   @override
+  String get id;
+  @override
   String get name;
   @override
   List<WatchlistItem> get items;
+  @override
+  DateTime get createdAt;
+  @override
+  DateTime get updatedAt;
   @override
   @JsonKey(ignore: true)
   _$WatchlistCopyWith<_Watchlist> get copyWith =>

@@ -100,4 +100,7 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
         return "Login failed. Please try again.";
     }
   }
+
+  @override
+  Stream<User?> get authChanges => _firebaseAuth.authStateChanges();
 }

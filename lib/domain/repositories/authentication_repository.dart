@@ -6,9 +6,11 @@ import '../../core/failure/failure.dart';
 import '../entities/user/app_user.dart';
 
 abstract class AuthenticationRepository {
-  Future<Either<Failure, AppUser>> signInWithEmailPassword(
+  AppUser? currentUser;
+
+  Stream<Future<AppUser?>> get authChanges;
+  Future<Either<Failure, void>> signInWithEmailPassword(
       SignInWithEmailPasswordRequest request);
-  Future<Either<Failure, AppUser>> signInWithCredential(
-      AuthCredential credential);
+  Future<Either<Failure, void>> signInWithCredential(AuthCredential credential);
   Future<Either<Failure, void>> signOut();
 }
