@@ -8,6 +8,7 @@ part 'app_user.g.dart';
 class AppUser with _$AppUser {
   const factory AppUser({
     required String uid,
+    required String name,
     required String email,
     required DateTime dob,
     @Default([]) List<Watchlist> watchlists,

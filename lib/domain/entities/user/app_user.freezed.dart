@@ -24,11 +24,13 @@ class _$AppUserTearOff {
 
   _AppUser call(
       {required String uid,
+      required String name,
       required String email,
       required DateTime dob,
       List<Watchlist> watchlists = const []}) {
     return _AppUser(
       uid: uid,
+      name: name,
       email: email,
       dob: dob,
       watchlists: watchlists,
@@ -46,6 +48,7 @@ const $AppUser = _$AppUserTearOff();
 /// @nodoc
 mixin _$AppUser {
   String get uid => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   DateTime get dob => throw _privateConstructorUsedError;
   List<Watchlist> get watchlists => throw _privateConstructorUsedError;
@@ -60,7 +63,11 @@ abstract class $AppUserCopyWith<$Res> {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) then) =
       _$AppUserCopyWithImpl<$Res>;
   $Res call(
-      {String uid, String email, DateTime dob, List<Watchlist> watchlists});
+      {String uid,
+      String name,
+      String email,
+      DateTime dob,
+      List<Watchlist> watchlists});
 }
 
 /// @nodoc
@@ -74,6 +81,7 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
   @override
   $Res call({
     Object? uid = freezed,
+    Object? name = freezed,
     Object? email = freezed,
     Object? dob = freezed,
     Object? watchlists = freezed,
@@ -82,6 +90,10 @@ class _$AppUserCopyWithImpl<$Res> implements $AppUserCopyWith<$Res> {
       uid: uid == freezed
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String,
       email: email == freezed
           ? _value.email
@@ -105,7 +117,11 @@ abstract class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
       __$AppUserCopyWithImpl<$Res>;
   @override
   $Res call(
-      {String uid, String email, DateTime dob, List<Watchlist> watchlists});
+      {String uid,
+      String name,
+      String email,
+      DateTime dob,
+      List<Watchlist> watchlists});
 }
 
 /// @nodoc
@@ -120,6 +136,7 @@ class __$AppUserCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res>
   @override
   $Res call({
     Object? uid = freezed,
+    Object? name = freezed,
     Object? email = freezed,
     Object? dob = freezed,
     Object? watchlists = freezed,
@@ -128,6 +145,10 @@ class __$AppUserCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res>
       uid: uid == freezed
           ? _value.uid
           : uid // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: name == freezed
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
               as String,
       email: email == freezed
           ? _value.email
@@ -150,6 +171,7 @@ class __$AppUserCopyWithImpl<$Res> extends _$AppUserCopyWithImpl<$Res>
 class _$_AppUser implements _AppUser {
   const _$_AppUser(
       {required this.uid,
+      required this.name,
       required this.email,
       required this.dob,
       this.watchlists = const []});
@@ -160,6 +182,8 @@ class _$_AppUser implements _AppUser {
   @override
   final String uid;
   @override
+  final String name;
+  @override
   final String email;
   @override
   final DateTime dob;
@@ -169,7 +193,7 @@ class _$_AppUser implements _AppUser {
 
   @override
   String toString() {
-    return 'AppUser(uid: $uid, email: $email, dob: $dob, watchlists: $watchlists)';
+    return 'AppUser(uid: $uid, name: $name, email: $email, dob: $dob, watchlists: $watchlists)';
   }
 
   @override
@@ -178,6 +202,7 @@ class _$_AppUser implements _AppUser {
         (other.runtimeType == runtimeType &&
             other is _AppUser &&
             const DeepCollectionEquality().equals(other.uid, uid) &&
+            const DeepCollectionEquality().equals(other.name, name) &&
             const DeepCollectionEquality().equals(other.email, email) &&
             const DeepCollectionEquality().equals(other.dob, dob) &&
             const DeepCollectionEquality()
@@ -188,6 +213,7 @@ class _$_AppUser implements _AppUser {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(uid),
+      const DeepCollectionEquality().hash(name),
       const DeepCollectionEquality().hash(email),
       const DeepCollectionEquality().hash(dob),
       const DeepCollectionEquality().hash(watchlists));
@@ -206,6 +232,7 @@ class _$_AppUser implements _AppUser {
 abstract class _AppUser implements AppUser {
   const factory _AppUser(
       {required String uid,
+      required String name,
       required String email,
       required DateTime dob,
       List<Watchlist> watchlists}) = _$_AppUser;
@@ -214,6 +241,8 @@ abstract class _AppUser implements AppUser {
 
   @override
   String get uid;
+  @override
+  String get name;
   @override
   String get email;
   @override

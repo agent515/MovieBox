@@ -8,6 +8,7 @@ part of 'app_user.dart';
 
 _$_AppUser _$$_AppUserFromJson(Map<String, dynamic> json) => _$_AppUser(
       uid: json['uid'] as String,
+      name: json['name'] as String,
       email: json['email'] as String,
       dob: DateTime.parse(json['dob'] as String),
       watchlists: (json['watchlists'] as List<dynamic>?)
@@ -19,6 +20,7 @@ _$_AppUser _$$_AppUserFromJson(Map<String, dynamic> json) => _$_AppUser(
 Map<String, dynamic> _$$_AppUserToJson(_$_AppUser instance) =>
     <String, dynamic>{
       'uid': instance.uid,
+      'name': instance.name,
       'email': instance.email,
       'dob': instance.dob.toIso8601String(),
       'watchlists': instance.watchlists,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_box/presentation/theme/app_theme.dart';
 
 import '../core/routes/routes.dart';
 
@@ -12,6 +13,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'Movie Box',
+      theme: AppTheme.darkTheme,
       routerDelegate: Routes.routerDelegate(),
       routeInformationParser: Routes.routeInformationParser(),
     );
