@@ -17,8 +17,8 @@ class ForgotPasswordSection extends StatelessWidget {
           GestureDetector(
             onTap: () {},
             child: Text(
-              'Forgot Password',
-              style: Theme.of(context).textTheme.headline6,
+              'Forgot Password?',
+              style: Theme.of(context).textTheme.headline6!,
             ),
           ),
         ],

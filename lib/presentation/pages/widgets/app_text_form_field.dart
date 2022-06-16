@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/app_colors.dart';
 import '../../constants/app_size.dart';
 
 class AppTextFormField extends StatelessWidget {
@@ -31,7 +32,17 @@ class AppTextFormField extends StatelessWidget {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          label: label,
+          label: label != null
+              ? Theme(
+                  data: Theme.of(context).copyWith(
+                      iconTheme: IconThemeData(
+                    color: focusNode!.hasFocus
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onBackground,
+                  )),
+                  child: label!,
+                )
+              : null,
         ),
         style: Theme.of(context).textTheme.bodyText2,
         onFieldSubmitted: onFieldSubmitted,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:movie_box/presentation/pages/error/error_page.dart';
 import 'package:movie_box/presentation/pages/home/home_page.dart';
 import 'package:movie_box/presentation/pages/sign_in/sign_in_page.dart';
+import 'package:movie_box/presentation/pages/sign_up/sign_up_page.dart';
 import 'package:movie_box/presentation/pages/splash/splash_page.dart';
 import 'package:movie_box/presentation/providers/authentication_provider.dart';
 
@@ -29,13 +30,19 @@ class Routes {
               if (ref.read(authenticationProvider).isLoggedIn) {
                 return const HomePage();
               }
-              return const SignInPage();
+              if (ref.read(authenticationProvider).showSignInPage) {
+                return const SignInPage();
+              }
+              return const SignUpPage();
             },
             pageBuilder: (_, state) {
               if (ref.read(authenticationProvider).isLoggedIn) {
                 return _slideTransitionPageBuilder(const HomePage(), state);
               }
-              return _slideTransitionPageBuilder(const SignInPage(), state);
+              if (ref.read(authenticationProvider).showSignInPage) {
+                return _slideTransitionPageBuilder(const SignInPage(), state);
+              }
+              return _slideTransitionPageBuilder(const SignUpPage(), state);
             }),
       ],
       errorBuilder: (_, __) => const ErrorPage(),

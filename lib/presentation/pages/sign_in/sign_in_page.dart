@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:movie_box/presentation/constants/asset_paths.dart';
+import 'package:movie_box/presentation/pages/sign_in/sign_in_page_view_model.dart';
 import 'package:movie_box/presentation/pages/sign_in/widgets/forgot_password_section.dart';
 
 import '../../constants/app_colors.dart';
 import '../../constants/app_size.dart';
+import '../widgets/app_loading_indicator.dart';
 import '../widgets/app_rounded_main_action_button.dart';
 import '../widgets/app_text_form_field.dart';
 import '../widgets/form_divider_section.dart';
@@ -19,59 +19,105 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  final TextEditingController _emailTextController = TextEditingController();
-  final TextEditingController _passwordTextController = TextEditingController();
-  final FocusNode _emailNode = FocusNode();
-  final FocusNode _passwordNode = FocusNode();
+  late final SignInPageViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ref.read(signInPageViewModel);
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Future.delayed(const Duration(seconds: 3)).then(
-    //   (value) => ref.read(authenticationProvider).isLoggedIn = true,
-    // );
+    final _viewModelWatch = ref.watch(signInPageViewModel);
 
     return SafeArea(
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(sizes.size16),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                sizes.vPadding20,
-                Text(
-                  'Sign in',
-                  style: Theme.of(context).textTheme.headline3,
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: Stack(
+            children: [
+              Center(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(sizes.size16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sizes.vPadding40,
+                        Text(
+                          'Sign in',
+                          style: Theme.of(context).textTheme.headline3,
+                        ),
+                        sizes.vPadding8,
+                        Text(
+                          'Enter the credentials below',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        sizes.vPadding40,
+                        Form(
+                          key: _viewModel.formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppTextFormField(
+                                focusNode: _viewModel.emailNode,
+                                controller: _viewModel.emailTextController,
+                                hintText: 'user@gmail.com',
+                                label: const Icon(Icons.email),
+                              ),
+                              AppTextFormField(
+                                obscureText: true,
+                                focusNode: _viewModel.passwordNode,
+                                controller: _viewModel.passwordTextController,
+                                label: const Icon(Icons.lock),
+                              ),
+                              const ForgotPasswordSection(),
+                              AppRoundedMainActionButton(
+                                text: 'Sign in',
+                                onPressed: () => _viewModel.signIn(),
+                              ),
+                              const FormDividerSection(),
+                              const SignInWithGoogle(),
+                              sizes.vPadding20,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'New here?',
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
+                                  ),
+                                  sizes.hPadding8,
+                                  InkWell(
+                                    onTap: () => _viewModel.goToSignUpPage(),
+                                    child: Text(
+                                      'Sign up',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText2!
+                                          .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                    ),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                sizes.vPadding40,
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppTextFormField(
-                      focusNode: _emailNode,
-                      controller: _emailTextController,
-                      hintText: 'user@gmail.com',
-                      label: const Icon(Icons.email),
-                    ),
-                    AppTextFormField(
-                      obscureText: true,
-                      focusNode: _passwordNode,
-                      controller: _passwordTextController,
-                      label: const Icon(Icons.lock),
-                    ),
-                    const ForgotPasswordSection(),
-                    AppRoundedMainActionButton(
-                      text: 'Sign in',
-                      onPressed: () => {},
-                    ),
-                    const FormDividerSection(),
-                    const SignInWithGoogle()
-                  ],
-                )
-              ],
-            ),
+              ),
+              if (_viewModelWatch.loading) const AppLoadingIndicator()
+            ],
           ),
         ),
       ),
