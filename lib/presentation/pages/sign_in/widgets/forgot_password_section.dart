@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routes/routes.dart';
 import '../../../constants/app_size.dart';
 
 class ForgotPasswordSection extends StatelessWidget {
@@ -15,7 +17,7 @@ class ForgotPasswordSection extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
-            onTap: () {},
+            onTap: () => context.go('/' + Routes.forgotPasswordRoute),
             child: Text(
               'Forgot Password?',
               style: Theme.of(context).textTheme.headline6!,

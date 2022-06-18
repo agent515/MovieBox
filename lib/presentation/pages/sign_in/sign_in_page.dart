@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:movie_box/presentation/pages/sign_in/sign_in_page_view_model.dart';
+import 'package:movie_box/presentation/pages/sign_in/sign_in_view_model.dart';
 import 'package:movie_box/presentation/pages/sign_in/widgets/forgot_password_section.dart';
 
-import '../../constants/app_colors.dart';
 import '../../constants/app_size.dart';
 import '../widgets/app_loading_indicator.dart';
 import '../widgets/app_rounded_main_action_button.dart';
@@ -19,17 +18,17 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  late final SignInPageViewModel _viewModel;
+  late final SignInViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ref.read(signInPageViewModel);
+    _viewModel = ref.read(signInViewModel);
   }
 
   @override
   Widget build(BuildContext context) {
-    final _viewModelWatch = ref.watch(signInPageViewModel);
+    final _viewModelWatch = ref.watch(signInViewModel);
 
     return SafeArea(
       child: GestureDetector(
@@ -63,12 +62,14 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AppTextFormField(
+                                labelText: 'Email',
                                 focusNode: _viewModel.emailNode,
                                 controller: _viewModel.emailTextController,
                                 hintText: 'user@gmail.com',
                                 label: const Icon(Icons.email),
                               ),
                               AppTextFormField(
+                                labelText: 'Password',
                                 obscureText: true,
                                 focusNode: _viewModel.passwordNode,
                                 controller: _viewModel.passwordTextController,

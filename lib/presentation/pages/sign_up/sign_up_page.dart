@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:movie_box/presentation/pages/sign_in/widgets/forgot_password_section.dart';
@@ -7,7 +8,7 @@ import '../sign_in/widgets/sign_in_with_google.dart';
 import '../widgets/app_rounded_main_action_button.dart';
 import '../widgets/app_text_form_field.dart';
 import '../widgets/form_divider_section.dart';
-import 'sign_up_page_view_model.dart';
+import 'sign_up_view_model.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -17,17 +18,17 @@ class SignUpPage extends ConsumerStatefulWidget {
 }
 
 class _SignUpPageState extends ConsumerState<SignUpPage> {
-  late final SignUpPageViewModel _viewModel;
+  late final SignUpViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = ref.read(signUpPageViewModel);
+    _viewModel = ref.read(signUpViewModel);
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(signUpPageViewModel);
+    ref.watch(signUpViewModel);
 
     return SafeArea(
       child: GestureDetector(
@@ -59,12 +60,21 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppTextFormField(
+                            labelText: 'Name',
+                            focusNode: _viewModel.nameNode,
+                            controller: _viewModel.nameTextController,
+                            hintText: 'Joe Adams',
+                            label: const Icon(Icons.person),
+                          ),
+                          AppTextFormField(
+                            labelText: 'Email',
                             focusNode: _viewModel.emailNode,
                             controller: _viewModel.emailTextController,
                             hintText: 'user@gmail.com',
                             label: const Icon(Icons.email),
                           ),
                           AppTextFormField(
+                            labelText: 'Password',
                             obscureText: true,
                             focusNode: _viewModel.passwordNode,
                             controller: _viewModel.passwordTextController,
@@ -72,12 +82,21 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                             hintText: 'password',
                           ),
                           AppTextFormField(
+                            labelText: 'Confirm Password',
                             obscureText: true,
                             focusNode: _viewModel.cpasswordNode,
                             controller: _viewModel.cpasswordTextController,
                             label: const Icon(Icons.lock),
                             hintText: 'confirm password',
                           ),
+                          AppTextFormField(
+                            labelText: 'Date of Birth',
+                            focusNode: _viewModel.dobNode,
+                            controller: _viewModel.dobTextController,
+                            label: const Icon(Icons.calendar_today),
+                            hintText: 'DD-MM-YYYY',
+                          ),
+                          sizes.vPadding16,
                           AppRoundedMainActionButton(
                             text: 'Sign up',
                             onPressed: () => {},
